@@ -19,6 +19,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var background = SKSpriteNode()
     var ground = SKSpriteNode()
     
+    var level = Level(level: 0, timer: 0)
+    
+    var frameNumber = 0
+    
+    let wallX = -350
+    let wallOffset=175
+    
+    let towerPos = CGPoint(x: -550, y: -150)
+    
     override func didMove(to view: SKView) {
         
         print("Starting")
@@ -46,21 +55,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBorder.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
         self.addChild(bottomBorder)
         
-        var runningFrames = [SKTexture]()
-        runningFrames.append(SKTexture(imageNamed: "spearman-0"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-1"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-2"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-3"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-4"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-5"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-6"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-7"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-8"))
-        runningFrames.append(SKTexture(imageNamed: "spearman-9"))
-        
         var tower = SKSpriteNode(imageNamed: "tower-0")
-        tower.size = CGSize(width: 140, height: 280)
-        tower.position = CGPoint(x: -550, y: -175)
+        tower.size = CGSize(width: 175, height: 350)
+        tower.position = towerPos
         tower.zPosition = 1
         
         var towerFrames = [SKTexture]()
@@ -78,31 +75,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         var wall = SKSpriteNode(imageNamed: "wall-0")
-        wall.size = CGSize(width: 400, height: 350)
-        wall.position = CGPoint(x: -350, y: -200)
+        wall.size = CGSize(width: 450, height: 350)
+        wall.position = CGPoint(x: wallX, y: -200)
         wall.zPosition = 1
         self.addChild(wall)
 
+        Animations.loadAnimations()
+        level = Level(level: 1, timer: 100)
+
+
+    }
+    
+    func loadEnemy() {
         
         var enemy = Enemy(type: Enemy.EnemyType.spearman, imageNamed: "spearman-0")
-        enemy.position = CGPoint(x: 600, y: -250)
+        enemy.state = .moving
+        enemy.animate()
+        enemy.position = CGPoint(x: 800, y: -300+CGFloat(arc4random_uniform(100)))
         enemy.size = CGSize(width: 48, height: 48)
         enemy.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
-        enemy.run(SKAction.repeatForever(SKAction.animate(with: runningFrames, timePerFrame: 0.1, resize: false, restore: true)), withKey: "enemyAnimation")
+
         enemy.xScale = -1
         enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 24, height: 48))
         enemy.physicsBody!.categoryBitMask = Level.objectType.enemy.rawValue
         enemy.physicsBody!.contactTestBitMask = Level.objectType.arrow.rawValue
         enemy.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
         enemy.physicsBody!.affectedByGravity = false
-        enemy.zPosition = 1
-
+        enemy.zPosition = 2
+        
         enemies.append(enemy)
         self.addChild(enemy)
-
     }
-    
-    
     func updateArrows() {
         for arrow in arrows {
             var physBod = arrow.physicsBody!
@@ -116,7 +119,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 enemyDead(enemy: enemy)
                 continue
             }
-            enemy.physicsBody!.velocity.dx = -enemy.enemySpeed
+            switch(enemy.state) {
+            case .moving:
+                enemy.physicsBody!.velocity.dx = -enemy.enemySpeed
+                if(enemy.position.x <= CGFloat(wallX+wallOffset+Int(enemy.position.y) + 250)) {
+                    enemy.state = .attacking
+                    enemy.animate()
+                }
+                break
+            case .attacking:
+                enemy.physicsBody!.velocity.dx = 0
+                break
+            default:
+                break
+            }
         }
     }
     
@@ -134,8 +150,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func bloodAnimation(enemy: Enemy) {
-        print("blood")
-        for _ in 1...10 {
+        for _ in 1...15 {
             let randAngle = Double(arc4random_uniform(UInt32(utils.pi)))-Double(utils.pi/2)
             let pixel = SKSpriteNode()
             pixel.color = UIColor.red
@@ -154,7 +169,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.addChild(pixel)
             
             pixel.physicsBody!.applyImpulse(CGVector(dx: 20*cos(randAngle), dy: 20*sin(randAngle)))
-            pixel.run(SKAction.fadeAlpha(to: 0.0, duration: 1.0))
         }
     }
 
@@ -179,7 +193,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 arrow.size = CGSize(width: 30, height: 3)
                 arrow.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
                 arrow.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 30, height: 3))
-                arrow.position = CGPoint(x: -550, y: -125)
+                arrow.position = CGPoint(x: towerPos.x, y: towerPos.y+50)
                 arrow.physicsBody!.velocity.dx = 3*power*cos(angle)
                 arrow.physicsBody!.velocity.dy = 3*power*sin(angle)
                 arrow.physicsBody!.affectedByGravity=true
@@ -233,5 +247,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Called before each frame is rendered
         updateArrows()
         updateEnemies()
+        
+        frameNumber += 1
+        
+        if(frameNumber % 60 == 0) {
+            level.timer -= 1;
+        }
+        
+        if(level.timer % 5 == 0 && frameNumber % 60 == 0) {
+            loadEnemy()
+        }
     }
 }

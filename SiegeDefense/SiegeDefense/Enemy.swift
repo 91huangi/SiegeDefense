@@ -18,6 +18,7 @@ class Enemy:SKSpriteNode{
     
     enum EnemyState:Int {
         case moving = 0
+        case attacking = 1
     }
     
     var enemySpeed: CGFloat
@@ -42,6 +43,29 @@ class Enemy:SKSpriteNode{
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func animate() {
+        var movingTextures = [SKTexture]()
+        var attackingTextures = [SKTexture]()
+        switch(type) {
+        case .spearman:
+            movingTextures = Animations.spearmanMoving
+            attackingTextures = Animations.spearmanAttacking
+            break
+        default:
+            break
+        }
+        switch(state) {
+        case .moving:
+            self.run(SKAction.repeatForever(SKAction.animate(with: movingTextures, timePerFrame: 0.1, resize: false, restore: true)), withKey: "enemyMoving")
+            break
+        case .attacking:
+            self.run(SKAction.repeatForever(SKAction.animate(with: attackingTextures, timePerFrame: 0.1, resize: false, restore: true)), withKey: "enemyAttacking")
+            break
+        default:
+            break
+        }
     }
     
     

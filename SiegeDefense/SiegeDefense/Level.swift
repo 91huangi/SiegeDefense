@@ -11,6 +11,14 @@ import SpriteKit
 
 class Level {
     
+    public var level:Int
+    public var timer:Int
+    
+    init(level: Int, timer: Int) {
+        self.level=level
+        self.timer=timer
+    }
+    
     enum objectType:UInt32 {
         case none=0
         
