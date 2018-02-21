@@ -12,6 +12,8 @@ import SpriteKit
 class Animations {
     public static var spearmanMoving = [SKTexture]()
     public static var spearmanAttacking = [SKTexture]()
+    public static var catapultMoving = [SKTexture]()
+    public static var catapultAttacking = [SKTexture]()
     
     static func loadAnimations() {
         spearmanMoving.append(SKTexture(imageNamed: "spearman-0"))
@@ -32,6 +34,13 @@ class Animations {
         spearmanAttacking.append(SKTexture(imageNamed: "spearman-14"))
         spearmanAttacking.append(SKTexture(imageNamed: "spearman-15"))
         
+        catapultMoving.append(SKTexture(imageNamed: "catapult-0"))
+        
+        catapultAttacking.append(SKTexture(imageNamed: "catapult-0"))
+        catapultAttacking.append(SKTexture(imageNamed: "catapult-1"))
+        catapultAttacking.append(SKTexture(imageNamed: "catapult-2"))
+        catapultAttacking.append(SKTexture(imageNamed: "catapult-3"))
+        catapultAttacking.append(SKTexture(imageNamed: "catapult-4"))
         
     }
 }

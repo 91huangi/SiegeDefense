@@ -14,6 +14,7 @@ class Enemy:SKSpriteNode{
     
     enum EnemyType:Int {
         case spearman = 0
+        case catapult = 3
     }
     
     enum EnemyState:Int {
@@ -22,6 +23,7 @@ class Enemy:SKSpriteNode{
     }
     
     var enemySpeed: CGFloat
+    var range: CGFloat
     var health: Int
     var type: EnemyType
     var state: EnemyState
@@ -33,7 +35,15 @@ class Enemy:SKSpriteNode{
         switch (type) {
         case .spearman:
             self.enemySpeed = 40.0
+            self.range = 0.0
             self.health = 1
+            break
+        case .catapult:
+            self.enemySpeed = 15.0
+            self.range = 650.0
+            self.health = 10
+            break
+        default:
             break
         }
         
@@ -53,6 +63,9 @@ class Enemy:SKSpriteNode{
             movingTextures = Animations.spearmanMoving
             attackingTextures = Animations.spearmanAttacking
             break
+        case .catapult:
+            movingTextures = Animations.catapultMoving
+            attackingTextures = Animations.catapultAttacking
         default:
             break
         }

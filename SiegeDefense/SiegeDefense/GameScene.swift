@@ -86,17 +86,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     }
     
-    func loadEnemy() {
+    func loadEnemy(type: Enemy.EnemyType) {
         
-        var enemy = Enemy(type: Enemy.EnemyType.spearman, imageNamed: "spearman-0")
+        
+        var enemy: Enemy
+        
+        switch(type) {
+        case .spearman:
+            enemy = Enemy(type: Enemy.EnemyType.spearman, imageNamed: "spearman-0")
+            enemy.size = CGSize(width: 48, height: 48)
+            enemy.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
+            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 24, height: 48))
+
+            break
+        case .catapult:
+            enemy = Enemy(type: Enemy.EnemyType.catapult, imageNamed: "catapult-0")
+            
+            enemy.size = CGSize(width: 96, height: 72)
+            enemy.run(SKAction.colorize(with: UIColor.brown, colorBlendFactor: 1.0, duration: 0.0))
+            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 96, height: 48))
+
+            break
+        }
+
+
         enemy.state = .moving
         enemy.animate()
-        enemy.position = CGPoint(x: 800, y: -300+CGFloat(arc4random_uniform(100)))
-        enemy.size = CGSize(width: 48, height: 48)
-        enemy.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
-
+        enemy.position = CGPoint(x: 800, y: -330+CGFloat(arc4random_uniform(100)))
+        
         enemy.xScale = -1
-        enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 24, height: 48))
         enemy.physicsBody!.categoryBitMask = Level.objectType.enemy.rawValue
         enemy.physicsBody!.contactTestBitMask = Level.objectType.arrow.rawValue
         enemy.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
@@ -122,7 +140,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             switch(enemy.state) {
             case .moving:
                 enemy.physicsBody!.velocity.dx = -enemy.enemySpeed
-                if(enemy.position.x <= CGFloat(wallX+wallOffset+Int(enemy.position.y) + 250)) {
+                if(enemy.position.x - enemy.range <= CGFloat(wallX+wallOffset+Int(enemy.position.y) + 250)) {
                     enemy.state = .attacking
                     enemy.animate()
                 }
@@ -255,7 +273,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if(level.timer % 5 == 0 && frameNumber % 60 == 0) {
-            loadEnemy()
+            loadEnemy(type: .catapult)
         }
     }
 }
