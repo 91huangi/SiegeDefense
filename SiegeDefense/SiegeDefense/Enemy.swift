@@ -20,12 +20,17 @@ class Enemy:SKSpriteNode{
     enum EnemyState:Int {
         case moving = 0
         case attacking = 1
+        case reloading = 2
     }
     
     var enemySpeed: CGFloat
+    var attack: CGFloat
     var range: CGFloat
     var health: Int
     var type: EnemyType
+    var timer: CGFloat
+    var attackTimer: CGFloat
+    var reloadTimer: CGFloat
     var state: EnemyState
     
     init(type: EnemyType, imageNamed: String) {
@@ -37,11 +42,19 @@ class Enemy:SKSpriteNode{
             self.enemySpeed = 40.0
             self.range = 0.0
             self.health = 1
+            self.timer = 0.0
+            self.attackTimer = 5.0
+            self.reloadTimer = 0.0
+            self.attack = 1.0
             break
         case .catapult:
             self.enemySpeed = 15.0
             self.range = 650.0
             self.health = 10
+            self.timer = 0.0
+            self.attackTimer = 10.0
+            self.reloadTimer = 20.0
+            self.attack = 10.0
             break
         default:
             break
@@ -53,32 +66,6 @@ class Enemy:SKSpriteNode{
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func animate() {
-        var movingTextures = [SKTexture]()
-        var attackingTextures = [SKTexture]()
-        switch(type) {
-        case .spearman:
-            movingTextures = Animations.spearmanMoving
-            attackingTextures = Animations.spearmanAttacking
-            break
-        case .catapult:
-            movingTextures = Animations.catapultMoving
-            attackingTextures = Animations.catapultAttacking
-        default:
-            break
-        }
-        switch(state) {
-        case .moving:
-            self.run(SKAction.repeatForever(SKAction.animate(with: movingTextures, timePerFrame: 0.1, resize: false, restore: true)), withKey: "enemyMoving")
-            break
-        case .attacking:
-            self.run(SKAction.repeatForever(SKAction.animate(with: attackingTextures, timePerFrame: 0.1, resize: false, restore: true)), withKey: "enemyAttacking")
-            break
-        default:
-            break
-        }
     }
     
     

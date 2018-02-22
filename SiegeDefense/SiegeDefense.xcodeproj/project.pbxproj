@@ -13,7 +13,9 @@
 		2C3F4C51203BC81D00B0FB8B /* enemies.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F4C50203BC81D00B0FB8B /* enemies.atlas */; };
 		2C3F4C53203BE12100B0FB8B /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C52203BE12100B0FB8B /* Level.swift */; };
 		2C3F4C55203BF38600B0FB8B /* misc.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F4C54203BF38600B0FB8B /* misc.atlas */; };
-		2C3F4C57203CA07800B0FB8B /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C56203CA07800B0FB8B /* Animations.swift */; };
+		2C3F4C57203CA07800B0FB8B /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C56203CA07800B0FB8B /* Graphics.swift */; };
+		2C3F4C59203E33A800B0FB8B /* Projectile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C58203E33A800B0FB8B /* Projectile.swift */; };
+		2CD6AF72203E886C001AF474 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD6AF71203E886C001AF474 /* Wall.swift */; };
 		2CE28349203B873B0029C701 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE28348203B873B0029C701 /* AppDelegate.swift */; };
 		2CE2834B203B873B0029C701 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2834A203B873B0029C701 /* GameScene.sks */; };
 		2CE2834D203B873B0029C701 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2834C203B873B0029C701 /* Actions.sks */; };
@@ -50,7 +52,9 @@
 		2C3F4C50203BC81D00B0FB8B /* enemies.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = enemies.atlas; path = ../../enemies.atlas; sourceTree = "<group>"; };
 		2C3F4C52203BE12100B0FB8B /* Level.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		2C3F4C54203BF38600B0FB8B /* misc.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = misc.atlas; path = ../../misc.atlas; sourceTree = "<group>"; };
-		2C3F4C56203CA07800B0FB8B /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animations.swift; sourceTree = "<group>"; };
+		2C3F4C56203CA07800B0FB8B /* Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
+		2C3F4C58203E33A800B0FB8B /* Projectile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projectile.swift; sourceTree = "<group>"; };
+		2CD6AF71203E886C001AF474 /* Wall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wall.swift; sourceTree = "<group>"; };
 		2CE28345203B873B0029C701 /* SiegeDefense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SiegeDefense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE28348203B873B0029C701 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2CE2834A203B873B0029C701 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -119,20 +123,22 @@
 			children = (
 				2CE28348203B873B0029C701 /* AppDelegate.swift */,
 				2C3F4C52203BE12100B0FB8B /* Level.swift */,
+				2C3F4C58203E33A800B0FB8B /* Projectile.swift */,
 				2CE2834A203B873B0029C701 /* GameScene.sks */,
-				2C3F4C56203CA07800B0FB8B /* Animations.swift */,
+				2C3F4C56203CA07800B0FB8B /* Graphics.swift */,
 				2CE2834C203B873B0029C701 /* Actions.sks */,
 				2CE2834E203B873B0029C701 /* GameScene.swift */,
 				2C3F4C4E203BBC7E00B0FB8B /* Enemy.swift */,
+				2CE28350203B873B0029C701 /* GameViewController.swift */,
+				2C3F4C4A203BA5F000B0FB8B /* Utils.swift */,
+				2CD6AF71203E886C001AF474 /* Wall.swift */,
 				2C3F4C54203BF38600B0FB8B /* misc.atlas */,
 				2C3F4C50203BC81D00B0FB8B /* enemies.atlas */,
 				2C3F4C4C203BB9B400B0FB8B /* objects.atlas */,
-				2CE28350203B873B0029C701 /* GameViewController.swift */,
 				2CE28352203B873B0029C701 /* Main.storyboard */,
 				2CE28355203B873B0029C701 /* Assets.xcassets */,
 				2CE28357203B873B0029C701 /* LaunchScreen.storyboard */,
 				2CE2835A203B873B0029C701 /* Info.plist */,
-				2C3F4C4A203BA5F000B0FB8B /* Utils.swift */,
 			);
 			path = SiegeDefense;
 			sourceTree = "<group>";
@@ -296,12 +302,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C3F4C53203BE12100B0FB8B /* Level.swift in Sources */,
+				2CD6AF72203E886C001AF474 /* Wall.swift in Sources */,
 				2CE2834F203B873B0029C701 /* GameScene.swift in Sources */,
 				2C3F4C4F203BBC7E00B0FB8B /* Enemy.swift in Sources */,
 				2CE28351203B873B0029C701 /* GameViewController.swift in Sources */,
+				2C3F4C59203E33A800B0FB8B /* Projectile.swift in Sources */,
 				2CE28349203B873B0029C701 /* AppDelegate.swift in Sources */,
 				2C3F4C4B203BA5F000B0FB8B /* Utils.swift in Sources */,
-				2C3F4C57203CA07800B0FB8B /* Animations.swift in Sources */,
+				2C3F4C57203CA07800B0FB8B /* Graphics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
