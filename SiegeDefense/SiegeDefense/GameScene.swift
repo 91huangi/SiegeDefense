@@ -66,8 +66,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall.zPosition = 1
         self.addChild(wall)
 
-        healthLabel.position = CGPoint(x: -500, y: 350)
-        healthLabel.color = UIColor.black
+        healthLabel.position = CGPoint(x: -550, y: 325)
+        healthLabel.fontColor = UIColor.black
+        healthLabel.fontName = "Arial Bold"
         self.addChild(healthLabel)
         
         
@@ -166,13 +167,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func updateEnemies() {
         for enemy in enemies {
             if(enemy.health <= 0) {
-                enemyDead(enemy: enemy)
+                enemy.removeFromParent()
+                enemies.remove(at: enemies.index(where: {$0==enemy})!)
                 continue
             }
             switch(enemy.state) {
             case .moving:
                 enemy.physicsBody!.velocity.dx = -enemy.enemySpeed
-                if(enemy.position.x - enemy.range <= wall.position.x+wall.offset-(ground.position.y-enemy.position.y)) {
+                if(wall.health > 0 && (enemy.position.x - enemy.range <= wall.position.x+wall.offset-(ground.position.y-enemy.position.y))) {
                     enemy.state = .attacking
                     animateEnemy(enemy: enemy)
                 }
@@ -198,6 +200,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     enemy.state = .attacking
                     animateEnemy(enemy: enemy)
                 }
+                if(wall.health <= 0) {
+                    enemy.state = .moving
+                    animateEnemy(enemy: enemy)
+                }
                 break
             default:
                 break
@@ -205,28 +211,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func enemyDead(enemy: Enemy) {
-        let type = enemy.type
-        switch (type) {
+    func arrowHitAnimation(enemy: Enemy) {
+        var debrisColor: UIColor
+        switch (enemy.type) {
         case .spearman:
-            bloodAnimation(enemy: enemy)
+            debrisColor = UIColor.red
+            break
+        case .catapult:
+            debrisColor = UIColor.black
             break
         default:
+            debrisColor = UIColor.red
             break
         }
-        enemy.removeFromParent()
-        enemies.remove(at: enemies.index(where: {$0==enemy})!)
-    }
-    
-    func bloodAnimation(enemy: Enemy) {
-        for _ in 1...15 {
-            let randAngle = Double(arc4random_uniform(UInt32(utils.pi)))-Double(utils.pi/2)
+        
+        // loading debris pixels
+        let debrisCount = arc4random_uniform(3)+2
+        
+        for _ in 1...debrisCount {
+            let randAngle = -CGFloat(arc4random_uniform(50))*utils.pi/200.0
+            let randForce = CGFloat(arc4random_uniform(20)+10)
             let pixel = SKSpriteNode()
-            pixel.color = UIColor.red
-            pixel.size = CGSize(width: 3.0, height: 3.0)
+            pixel.color = debrisColor
+            pixel.size = CGSize(width: 5.0, height: 5.0)
             pixel.position = enemy.position
-            pixel.zPosition = 1
-            pixel.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 3, height: 3))
+            pixel.zPosition = 2
+            pixel.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 5, height: 5))
             pixel.physicsBody!.affectedByGravity = true
             pixel.physicsBody!.mass = 0.1
             
@@ -237,7 +247,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             self.addChild(pixel)
             
-            pixel.physicsBody!.applyImpulse(CGVector(dx: 20*cos(randAngle), dy: 20*sin(randAngle)))
+            pixel.physicsBody!.applyImpulse(CGVector(dx: randForce*cos(randAngle), dy: randForce*sin(randAngle)))
         }
     }
 
@@ -329,7 +339,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 contact.bodyB.node?.removeFromParent()
             }
             arrows.remove(at: arrows.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!)
-            enemies[enemies.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!].health -= 1
+            let enemy = enemies[enemies.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!]
+            enemy.health -= 1
+            arrowHitAnimation(enemy: enemy)
             break
         case Level.objectType.arrow.rawValue | Level.objectType.screenBorder.rawValue:
             if(contact.bodyA.categoryBitMask == Level.objectType.arrow.rawValue) {
@@ -351,6 +363,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func updateWall() {
+        wall.health = max(0, wall.health)
+        healthLabel.text = String(wall.health) + "/" + String(wall.maxHealth)
+        let healthPercent = CGFloat(wall.health) / CGFloat(wall.maxHealth)
+        if(healthPercent > 0.5 && healthPercent <= 0.75 ) {
+            wall.texture = SKTexture(imageNamed: "wall-1")
+        } else if (healthPercent > 0.25 && healthPercent <= 0.5) {
+            wall.texture = SKTexture(imageNamed: "wall-2")
+        } else if (healthPercent > 0 && healthPercent <= 0.25) {
+            wall.texture = SKTexture(imageNamed: "wall-3")
+        } else if (healthPercent <= 0) {
+            wall.removeFromParent()
+        }
+    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
@@ -359,8 +386,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         updateProjectiles()
         
         frameNumber += 1
-        
-        healthLabel.text = String(wall.health) + "/" + String(wall.maxHealth)
+        updateWall()
         
         if(frameNumber % 60 == 0) {
             level.timer -= 1;
