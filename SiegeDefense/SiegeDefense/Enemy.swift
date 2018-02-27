@@ -40,7 +40,7 @@ class Enemy:SKSpriteNode{
         
         switch (type) {
         case .spearman:
-            self.enemySpeed = 40.0
+            self.enemySpeed = 60.0
             self.range = 0.0
             self.health = 1
             self.timer = 0.0
@@ -55,7 +55,7 @@ class Enemy:SKSpriteNode{
             self.timer = 0.0
             self.attackTimer = 5.0
             self.reloadTimer = 0.0
-            self.attack = 1.0
+            self.attack = 2.0
             break
         case .catapult:
             self.enemySpeed = 15.0

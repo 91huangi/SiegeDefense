@@ -15,6 +15,7 @@
 		2C3F4C57203CA07800B0FB8B /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C56203CA07800B0FB8B /* Graphics.swift */; };
 		2C3F4C59203E33A800B0FB8B /* Projectile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C58203E33A800B0FB8B /* Projectile.swift */; };
 		2C4AD0212044DBF100002C41 /* enemies.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C4AD0202044DBF100002C41 /* enemies.atlas */; };
+		2C4AD0232044F27800002C41 /* Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4AD0222044F27800002C41 /* Arrow.swift */; };
 		2CD6AF72203E886C001AF474 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD6AF71203E886C001AF474 /* Wall.swift */; };
 		2CE28349203B873B0029C701 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE28348203B873B0029C701 /* AppDelegate.swift */; };
 		2CE2834B203B873B0029C701 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2834A203B873B0029C701 /* GameScene.sks */; };
@@ -54,6 +55,7 @@
 		2C3F4C56203CA07800B0FB8B /* Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
 		2C3F4C58203E33A800B0FB8B /* Projectile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projectile.swift; sourceTree = "<group>"; };
 		2C4AD0202044DBF100002C41 /* enemies.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = enemies.atlas; path = ../../enemies.atlas; sourceTree = "<group>"; };
+		2C4AD0222044F27800002C41 /* Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrow.swift; sourceTree = "<group>"; };
 		2CD6AF71203E886C001AF474 /* Wall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wall.swift; sourceTree = "<group>"; };
 		2CE28345203B873B0029C701 /* SiegeDefense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SiegeDefense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE28348203B873B0029C701 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				2CE28348203B873B0029C701 /* AppDelegate.swift */,
 				2C3F4C52203BE12100B0FB8B /* Level.swift */,
 				2C3F4C58203E33A800B0FB8B /* Projectile.swift */,
+				2C4AD0222044F27800002C41 /* Arrow.swift */,
 				2CE2834A203B873B0029C701 /* GameScene.sks */,
 				2C3F4C56203CA07800B0FB8B /* Graphics.swift */,
 				2CE2834C203B873B0029C701 /* Actions.sks */,
@@ -304,6 +307,7 @@
 				2C3F4C53203BE12100B0FB8B /* Level.swift in Sources */,
 				2CD6AF72203E886C001AF474 /* Wall.swift in Sources */,
 				2CE2834F203B873B0029C701 /* GameScene.swift in Sources */,
+				2C4AD0232044F27800002C41 /* Arrow.swift in Sources */,
 				2C3F4C4F203BBC7E00B0FB8B /* Enemy.swift in Sources */,
 				2CE28351203B873B0029C701 /* GameViewController.swift in Sources */,
 				2C3F4C59203E33A800B0FB8B /* Projectile.swift in Sources */,

@@ -21,8 +21,18 @@ class Utils {
         return CGFloat(hypotf(Float(p2.x-p1.x), Float(p2.y-p1.y)))
     }
     
-    func arctan(r: CGFloat) -> CGFloat {
-        var arctan = atan(r)
-        return min(arctan, arctan+2*pi)
+    // arctan with values in [0, 2*pi)
+    func arctan(opp: CGFloat, adj: CGFloat) -> CGFloat {
+        var arctan = atan(opp/adj)
+        if(opp >= 0 && adj >= 0) {
+            return arctan
+        } else if (opp < 0 && adj >= 0) {
+            return arctan + 2*pi
+        } else if (opp >= 0 && adj < 0) {
+            return pi+arctan
+        } else if (opp < 0 && adj < 0) {
+            return pi+arctan
+        }
+        return CGFloat(0)
     }
 }

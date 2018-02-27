@@ -17,7 +17,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var utils = Utils()
     
-    var arrows = [SKSpriteNode]()
+    var arrows = [Arrow]()
     var enemies = [Enemy]()
     var projectiles = [Projectile]()
     var wall = Wall(health: 1, maxHealth: 1, imageNamed: "")
@@ -25,14 +25,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ground = SKSpriteNode()
     
     var towerBottom = CGFloat(0)
+    var heatedShot = true
+    var splitShot = true
+    var archers = 8
     
     var healthLabel = SKLabelNode()
     
-    var level = Level(level: 0, timer: 0)
+    var level = Level(level: 0)
     
     override func didMove(to view: SKView) {
         
-        print("Starting")
         physicsWorld.contactDelegate = self
         
         self.scene?.backgroundColor = Graphics.skyBlue
@@ -47,7 +49,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // adding scene border
         let bottomBorder = SKSpriteNode()
         bottomBorder.position = CGPoint(x:0, y:-370)
-        bottomBorder.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 4000, height: 2))
+        bottomBorder.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10000, height: 2))
         bottomBorder.physicsBody!.pinned=true
         bottomBorder.physicsBody!.categoryBitMask = Level.objectType.screenBorder.rawValue
         bottomBorder.physicsBody!.contactTestBitMask = Level.objectType.arrow.rawValue | Level.objectType.debris.rawValue
@@ -78,7 +80,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
 
-        level = Level(level: 1, timer: 100)
+        level = Level(level: 50)
 
 
     }
@@ -116,7 +118,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         enemy.state = .moving
         animateEnemy(enemy: enemy)
-        enemy.position = CGPoint(x: 750, y: towerBottom+CGFloat(Int(arc4random_uniform(100)) - 25))
+        enemy.position = CGPoint(x: 750+CGFloat(arc4random_uniform(15)), y: towerBottom+CGFloat(Int(arc4random_uniform(100)) - 25))
         
         enemy.xScale = -1
         enemy.physicsBody!.categoryBitMask = Level.objectType.enemy.rawValue
@@ -134,6 +136,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(enemy)
     }
     
+    
+    func loadArrow(power: CGFloat, angle: CGFloat, heatedShot: Bool) {
+        var arrow = Arrow(heatedShot: heatedShot, imageNamed: "arrow")
+        arrow.size = CGSize(width: 30, height: 3)
+        if(arrow.heatedShot) {
+            arrow.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0))
+        } else {
+            arrow.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
+        }
+        arrow.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 30, height: 3))
+        arrow.position = CGPoint(x: tower.position.x, y: tower.position.y+50)
+        arrow.physicsBody!.velocity.dx = 3*power*cos(angle)
+        arrow.physicsBody!.velocity.dy = 3*power*sin(angle)
+        arrow.physicsBody!.affectedByGravity=true
+        arrow.physicsBody!.allowsRotation = true
+        arrow.physicsBody!.categoryBitMask = Level.objectType.arrow.rawValue
+        arrow.physicsBody!.contactTestBitMask = Level.objectType.enemy.rawValue | Level.objectType.screenBorder.rawValue
+        arrow.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+        arrow.zPosition = 4
+        arrows.append(arrow)
+        self.addChild(arrow)
+    }
     
     func loadProjectile(owner: Enemy) {
         
@@ -176,7 +200,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func updateArrows() {
         for arrow in arrows {
             var physBod = arrow.physicsBody!
-            arrow.run(SKAction.rotate(toAngle: utils.arctan(r: physBod.velocity.dy/physBod.velocity.dx), duration: 0))
+            arrow.run(SKAction.rotate(toAngle: utils.arctan(opp: physBod.velocity.dy, adj: physBod.velocity.dx), duration: 0))
         }
     }
     
@@ -325,24 +349,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for t in touches {
             let location=t.location(in:self)
             let startLoc = touchLoc[t]!
-            if(utils.distance(p1: location, p2: startLoc) >= 25 && startLoc.x > location.x) {
+            if(utils.distance(p1: location, p2: startLoc) >= 25) {
                 let power = min(utils.distance(p1: location, p2: startLoc), 500)
-                let angle = utils.arctan(r: (startLoc.y-location.y)/(startLoc.x-location.x))
-                var arrow = SKSpriteNode(imageNamed: "arrow")
-                arrow.size = CGSize(width: 30, height: 3)
-                arrow.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
-                arrow.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 30, height: 3))
-                arrow.position = CGPoint(x: tower.position.x, y: tower.position.y+50)
-                arrow.physicsBody!.velocity.dx = 3*power*cos(angle)
-                arrow.physicsBody!.velocity.dy = 3*power*sin(angle)
-                arrow.physicsBody!.affectedByGravity=true
-                arrow.physicsBody!.allowsRotation = true
-                arrow.physicsBody!.categoryBitMask = Level.objectType.arrow.rawValue
-                arrow.physicsBody!.contactTestBitMask = Level.objectType.enemy.rawValue | Level.objectType.screenBorder.rawValue
-                arrow.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
-                arrow.zPosition = 4
-                arrows.append(arrow)
-                self.addChild(arrow)
+                let angle = utils.arctan(opp: (startLoc.y-location.y), adj: (startLoc.x-location.x))
+                if(splitShot) {
+                    loadArrow(power: power, angle: angle-CGFloat(0.1), heatedShot: heatedShot)
+                    loadArrow(power: power, angle: angle+CGFloat(0.1), heatedShot: heatedShot)
+                    
+                }
+                loadArrow(power: power, angle: angle, heatedShot: heatedShot)
             }
         }
     }
@@ -358,9 +373,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else {
                 contact.bodyB.node?.removeFromParent()
             }
-            arrows.remove(at: arrows.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!)
+            let arrowIndex = arrows.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!
             let enemy = enemies[enemies.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!]
-            enemy.health -= 1
+            if(arrows[arrowIndex].heatedShot && enemy.type == .catapult) {
+                enemy.health -= 4
+            } else {
+                enemy.health -= 1
+            }
+            arrows.remove(at: arrowIndex)
             arrowHitAnimation(enemy: enemy)
             break
         case Level.objectType.arrow.rawValue | Level.objectType.screenBorder.rawValue:
@@ -401,26 +421,58 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        frameNumber = (frameNumber + 1) % 60
+
         updateArrows()
         updateEnemies()
         updateProjectiles()
-        
-        frameNumber += 1
         updateWall()
         
-        if(frameNumber % 60 == 0) {
+        if(frameNumber == 0) {
             level.timer -= 1;
-            level.loadOnFrame = Int(arc4random_uniform(59))
+            
         }
         
-        if(level.timer % 99 == 0 && frameNumber % 60 == level.loadOnFrame) {
-            loadEnemy(type: .catapult)
-        }
-        if(level.timer % 3 == 0 && frameNumber % 60 == level.loadOnFrame) {
-            loadEnemy(type: .spearman)
-        }
-        if(level.timer % 7 == 0 && level.timer % 3 != 0 && frameNumber % 60 == level.loadOnFrame) {
-            loadEnemy(type: .knight)
+            if(arc4random_uniform(500) < min(30, level.level) && level.timer > 0) {
+                if(level.level <= 3) {
+                    loadEnemy(type: .spearman)
+                } else if (level.level <= 6) {
+                    let rand = arc4random_uniform(2)
+                    if(rand < 1) {
+                        loadEnemy(type: .spearman)
+                    } else {
+                        loadEnemy(type: .knight)
+                    }
+                } else if (level.level <= 15) {
+                    let rand = arc4random_uniform(5)
+                    if(rand < 3) {
+                        loadEnemy(type: .spearman)
+                    } else {
+                        loadEnemy(type: .knight)
+                    }
+                } else {
+                    let rand = arc4random_uniform(20)
+                    if (rand < 9) {
+                        loadEnemy(type: .spearman)
+                    } else if (rand < 19)  {
+                        loadEnemy(type: .knight)
+                    } else {
+                        loadEnemy(type: .catapult)
+                        
+                    }
+                }
+            }
+
+
+        if(frameNumber == 0 && archers > 0) {
+            for _ in 1...archers {
+                if(arc4random_uniform(2) > 0) {
+                    let power = CGFloat(200+arc4random_uniform(250))
+                    let angle = utils.pi*(CGFloat(arc4random_uniform(25))*CGFloat(0.01))
+                    loadArrow(power: power, angle: angle, heatedShot: false)
+                }
+            }
+
         }
     }
 }

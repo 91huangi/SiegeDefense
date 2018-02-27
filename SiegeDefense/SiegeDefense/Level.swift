@@ -13,12 +13,10 @@ class Level {
     
     public var level:Int
     public var timer:Int
-    public var loadOnFrame: Int
     
-    init(level: Int, timer: Int) {
+    init(level: Int) {
         self.level=level
-        self.timer=timer
-        self.loadOnFrame = 0
+        self.timer=20+level
     }
     
     enum objectType:UInt32 {
