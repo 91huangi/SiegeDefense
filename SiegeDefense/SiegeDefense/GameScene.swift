@@ -21,13 +21,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var enemies = [Enemy]()
     var projectiles = [Projectile]()
     var wall = Wall(health: 1, maxHealth: 1, imageNamed: "")
+    var clouds = [SKSpriteNode]()
     var tower = SKSpriteNode()
     var ground = SKSpriteNode()
     
     var towerBottom = CGFloat(0)
     var heatedShot = true
     var splitShot = true
-    var archers = 8
+    var archers = 10
     
     var healthLabel = SKLabelNode()
     
@@ -56,6 +57,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBorder.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
         self.addChild(bottomBorder)
         
+        // loading tower
         tower = SKSpriteNode(imageNamed: "tower-0")
         tower.size = CGSize(width: 175, height: 350)
         tower.position = CGPoint(x: -550, y: -125)
@@ -65,7 +67,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         towerBottom = tower.position.y-CGFloat(0.5)*tower.size.height
         
-        
+        // loading wall
         wall = Wall(health: 300, maxHealth: 300, imageNamed: "wall-0")
         wall.size = CGSize(width: 473, height: 350)
         wall.position = CGPoint(x: -325, y: -200)
@@ -78,11 +80,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(healthLabel)
         
         
+        let numClouds = arc4random_uniform(3)+2
+        
+        for _ in 0...numClouds {
+            loadCloud(newCloud: false)
+        }
+        
         
 
         level = Level(level: 50)
 
 
+    }
+    
+    
+    func loadCloud(newCloud: Bool) {
+        let cloudIndex = Int(arc4random_uniform(6))
+        let cloud = SKSpriteNode(texture: Graphics.clouds[cloudIndex])
+        cloud.zPosition = -1
+        if(newCloud) {
+            cloud.position.x = -256 - 667
+        } else {
+            cloud.position.x = CGFloat(Int(arc4random_uniform(1334)) - 667)
+        }
+        cloud.position.y = CGFloat(Int(arc4random_uniform(250))+100)
+        cloud.run(SKAction.fadeAlpha(to: CGFloat(0.1)*CGFloat(Int(arc4random_uniform(3)) + 2), duration: 0.0))
+        cloud.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 512, height: 256))
+        cloud.physicsBody!.velocity.dx = CGFloat(Int(arc4random_uniform(30)) + 10)
+        cloud.physicsBody!.mass = 0.0
+        cloud.physicsBody!.linearDamping = 0.0
+        cloud.physicsBody!.friction = 0.0
+        cloud.physicsBody!.affectedByGravity = false
+        cloud.physicsBody!.categoryBitMask = Level.objectType.none.rawValue
+        cloud.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+        clouds.append(cloud)
+        self.addChild(cloud)
     }
     
     func loadEnemy(type: Enemy.EnemyType) {
@@ -418,11 +450,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func updateClouds() {
+        for cloud in clouds {
+            if(cloud.position.x >= 667+256) {
+                cloud.removeFromParent()
+                clouds.remove(at: clouds.index(where: {$0==cloud})!)
+                loadCloud(newCloud: true)
+            }
+        }
+    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         frameNumber = (frameNumber + 1) % 60
 
+        updateClouds()
         updateArrows()
         updateEnemies()
         updateProjectiles()

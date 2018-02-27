@@ -58,7 +58,7 @@ class Enemy:SKSpriteNode{
             self.attack = 2.0
             break
         case .catapult:
-            self.enemySpeed = 15.0
+            self.enemySpeed = 30.0
             self.range = 650.0
             self.health = 10
             self.timer = 0.0

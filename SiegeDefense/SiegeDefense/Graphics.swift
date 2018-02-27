@@ -27,6 +27,8 @@ class Graphics {
     public static var catapultAttacking = [SKTexture]()
     public static var catapultReloading = [SKTexture]()
     
+    public static var clouds = [SKTexture]()
+    
     static func loadAnimations() {
         towerFrames.append(SKTexture(imageNamed: "tower-0"))
         towerFrames.append(SKTexture(imageNamed: "tower-1"))
@@ -99,6 +101,13 @@ class Graphics {
         catapultReloading.append(SKTexture(imageNamed: "catapult-15"))
         catapultReloading.append(SKTexture(imageNamed: "catapult-16"))
         catapultReloading.append(SKTexture(imageNamed: "catapult-17"))
+        
+        clouds.append(SKTexture(imageNamed: "cloud-0"))
+        clouds.append(SKTexture(imageNamed: "cloud-1"))
+        clouds.append(SKTexture(imageNamed: "cloud-2"))
+        clouds.append(SKTexture(imageNamed: "cloud-4"))
+        clouds.append(SKTexture(imageNamed: "cloud-5"))
+        clouds.append(SKTexture(imageNamed: "cloud-6"))
         
     }
 }
