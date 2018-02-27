@@ -14,6 +14,7 @@ class Enemy:SKSpriteNode{
     
     enum EnemyType:Int {
         case spearman = 0
+        case knight = 1
         case catapult = 3
     }
     
@@ -42,6 +43,15 @@ class Enemy:SKSpriteNode{
             self.enemySpeed = 40.0
             self.range = 0.0
             self.health = 1
+            self.timer = 0.0
+            self.attackTimer = 5.0
+            self.reloadTimer = 0.0
+            self.attack = 1.0
+            break
+        case .knight:
+            self.enemySpeed = 40.0
+            self.range = 0.0
+            self.health = 2
             self.timer = 0.0
             self.attackTimer = 5.0
             self.reloadTimer = 0.0

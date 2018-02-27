@@ -10,11 +10,11 @@
 		2C3F4C4B203BA5F000B0FB8B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C4A203BA5F000B0FB8B /* Utils.swift */; };
 		2C3F4C4D203BB9B400B0FB8B /* objects.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F4C4C203BB9B400B0FB8B /* objects.atlas */; };
 		2C3F4C4F203BBC7E00B0FB8B /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C4E203BBC7E00B0FB8B /* Enemy.swift */; };
-		2C3F4C51203BC81D00B0FB8B /* enemies.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F4C50203BC81D00B0FB8B /* enemies.atlas */; };
 		2C3F4C53203BE12100B0FB8B /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C52203BE12100B0FB8B /* Level.swift */; };
 		2C3F4C55203BF38600B0FB8B /* misc.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F4C54203BF38600B0FB8B /* misc.atlas */; };
 		2C3F4C57203CA07800B0FB8B /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C56203CA07800B0FB8B /* Graphics.swift */; };
 		2C3F4C59203E33A800B0FB8B /* Projectile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C58203E33A800B0FB8B /* Projectile.swift */; };
+		2C4AD0212044DBF100002C41 /* enemies.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C4AD0202044DBF100002C41 /* enemies.atlas */; };
 		2CD6AF72203E886C001AF474 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD6AF71203E886C001AF474 /* Wall.swift */; };
 		2CE28349203B873B0029C701 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE28348203B873B0029C701 /* AppDelegate.swift */; };
 		2CE2834B203B873B0029C701 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2834A203B873B0029C701 /* GameScene.sks */; };
@@ -49,11 +49,11 @@
 		2C3F4C4A203BA5F000B0FB8B /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		2C3F4C4C203BB9B400B0FB8B /* objects.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = objects.atlas; path = ../../objects.atlas; sourceTree = "<group>"; };
 		2C3F4C4E203BBC7E00B0FB8B /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
-		2C3F4C50203BC81D00B0FB8B /* enemies.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = enemies.atlas; path = ../../enemies.atlas; sourceTree = "<group>"; };
 		2C3F4C52203BE12100B0FB8B /* Level.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		2C3F4C54203BF38600B0FB8B /* misc.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = misc.atlas; path = ../../misc.atlas; sourceTree = "<group>"; };
 		2C3F4C56203CA07800B0FB8B /* Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
 		2C3F4C58203E33A800B0FB8B /* Projectile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projectile.swift; sourceTree = "<group>"; };
+		2C4AD0202044DBF100002C41 /* enemies.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = enemies.atlas; path = ../../enemies.atlas; sourceTree = "<group>"; };
 		2CD6AF71203E886C001AF474 /* Wall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wall.swift; sourceTree = "<group>"; };
 		2CE28345203B873B0029C701 /* SiegeDefense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SiegeDefense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE28348203B873B0029C701 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -132,8 +132,8 @@
 				2CE28350203B873B0029C701 /* GameViewController.swift */,
 				2C3F4C4A203BA5F000B0FB8B /* Utils.swift */,
 				2CD6AF71203E886C001AF474 /* Wall.swift */,
+				2C4AD0202044DBF100002C41 /* enemies.atlas */,
 				2C3F4C54203BF38600B0FB8B /* misc.atlas */,
-				2C3F4C50203BC81D00B0FB8B /* enemies.atlas */,
 				2C3F4C4C203BB9B400B0FB8B /* objects.atlas */,
 				2CE28352203B873B0029C701 /* Main.storyboard */,
 				2CE28355203B873B0029C701 /* Assets.xcassets */,
@@ -275,7 +275,7 @@
 				2CE2834B203B873B0029C701 /* GameScene.sks in Resources */,
 				2CE28356203B873B0029C701 /* Assets.xcassets in Resources */,
 				2CE28359203B873B0029C701 /* LaunchScreen.storyboard in Resources */,
-				2C3F4C51203BC81D00B0FB8B /* enemies.atlas in Resources */,
+				2C4AD0212044DBF100002C41 /* enemies.atlas in Resources */,
 				2CE2834D203B873B0029C701 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

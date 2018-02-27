@@ -17,7 +17,7 @@ class Wall:SKSpriteNode {
     init(health: Int, maxHealth: Int, imageNamed: String) {
         self.health = health
         self.maxHealth = maxHealth
-        self.offset = 155
+        self.offset = 150
         
         let texture = SKTexture(imageNamed: imageNamed)
         super.init(texture: texture, color: UIColor.black, size: texture.size())

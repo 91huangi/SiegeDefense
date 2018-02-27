@@ -24,6 +24,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var tower = SKSpriteNode()
     var ground = SKSpriteNode()
     
+    var towerBottom = CGFloat(0)
+    
     var healthLabel = SKLabelNode()
     
     var level = Level(level: 0, timer: 0)
@@ -55,9 +57,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         tower = SKSpriteNode(imageNamed: "tower-0")
         tower.size = CGSize(width: 175, height: 350)
         tower.position = CGPoint(x: -550, y: -125)
-        tower.zPosition = 1
+        tower.zPosition = 3
         tower.run(SKAction.repeatForever(SKAction.animate(with: Graphics.towerFrames, timePerFrame: 0.1, resize: false, restore: true)), withKey: "towerAnimation")
         self.addChild(tower)
+        
+        towerBottom = tower.position.y-CGFloat(0.5)*tower.size.height
         
         
         wall = Wall(health: 300, maxHealth: 300, imageNamed: "wall-0")
@@ -88,12 +92,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case .spearman:
             enemy = Enemy(type: Enemy.EnemyType.spearman, imageNamed: "spearman-0")
             enemy.size = CGSize(width: 48, height: 48)
-            enemy.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
+            enemy.run(SKAction.colorize(with: Graphics.spearmanColor, colorBlendFactor: 1.0, duration: 0.0))
             enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 24, height: 48))
 
             break
+        case .knight:
+            enemy = Enemy(type: Enemy.EnemyType.knight, imageNamed: "knight-0")
+            enemy.size = CGSize(width: 56, height: 56)
+            enemy.run(SKAction.colorize(with: Graphics.knightColor, colorBlendFactor: 1.0, duration: 0.0))
+            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 24, height: 48))
+            break
+            
         case .catapult:
-            enemy = Enemy(type: Enemy.EnemyType.catapult, imageNamed: "catapult-3")
+            enemy = Enemy(type: Enemy.EnemyType.catapult, imageNamed: "catapult-0")
             
             enemy.size = CGSize(width: 96, height: 84)
             enemy.run(SKAction.colorize(with: Graphics.catapultColor, colorBlendFactor: 1.0, duration: 0.0))
@@ -105,14 +116,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         enemy.state = .moving
         animateEnemy(enemy: enemy)
-        enemy.position = CGPoint(x: 800, y: ground.position.y+CGFloat(arc4random_uniform(70)))
+        enemy.position = CGPoint(x: 750, y: towerBottom+CGFloat(Int(arc4random_uniform(100)) - 25))
         
         enemy.xScale = -1
         enemy.physicsBody!.categoryBitMask = Level.objectType.enemy.rawValue
         enemy.physicsBody!.contactTestBitMask = Level.objectType.arrow.rawValue
         enemy.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
         enemy.physicsBody!.affectedByGravity = false
-        enemy.zPosition = 2
+        
+        if(enemy.position.y - CGFloat(0.5)*enemy.size.height >= towerBottom) {
+            enemy.zPosition = 2
+        } else {
+            enemy.zPosition = 4
+        }
         
         enemies.append(enemy)
         self.addChild(enemy)
@@ -134,9 +150,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         projectile.physicsBody = SKPhysicsBody(circleOfRadius: 6.0)
         projectile.physicsBody?.pinned = false
         projectile.physicsBody?.affectedByGravity = true
-        projectile.physicsBody?.velocity = CGVector(dx: -1200, dy: 600)
+        projectile.physicsBody?.velocity = CGVector(dx: -1200, dy: 500)
         projectile.physicsBody?.collisionBitMask = Level.objectType.none.rawValue
-        projectile.zPosition = 2
+        projectile.zPosition = 3
         
         
         projectiles.append(projectile)
@@ -263,6 +279,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             attackingTextures = Graphics.spearmanAttacking
             reloadingTextures = Graphics.spearmanReloading
             break
+        case .knight:
+            movingTextures = Graphics.knightMoving
+            attackingTextures = Graphics.knightAttacking
+            reloadingTextures = Graphics.knightReloading
         case .catapult:
             movingTextures = Graphics.catapultMoving
             attackingTextures = Graphics.catapultAttacking
@@ -320,7 +340,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 arrow.physicsBody!.categoryBitMask = Level.objectType.arrow.rawValue
                 arrow.physicsBody!.contactTestBitMask = Level.objectType.enemy.rawValue | Level.objectType.screenBorder.rawValue
                 arrow.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
-                arrow.zPosition = 1
+                arrow.zPosition = 4
                 arrows.append(arrow)
                 self.addChild(arrow)
             }
@@ -390,13 +410,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if(frameNumber % 60 == 0) {
             level.timer -= 1;
+            level.loadOnFrame = Int(arc4random_uniform(59))
         }
         
-        if(level.timer % 99 == 0 && frameNumber % 60 == 0) {
+        if(level.timer % 99 == 0 && frameNumber % 60 == level.loadOnFrame) {
             loadEnemy(type: .catapult)
         }
-        if(level.timer % 5 == 0 && frameNumber % 60 == 0) {
+        if(level.timer % 3 == 0 && frameNumber % 60 == level.loadOnFrame) {
             loadEnemy(type: .spearman)
+        }
+        if(level.timer % 7 == 0 && level.timer % 3 != 0 && frameNumber % 60 == level.loadOnFrame) {
+            loadEnemy(type: .knight)
         }
     }
 }
