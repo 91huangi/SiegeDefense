@@ -132,9 +132,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break
         case .knight:
             enemy = Enemy(type: Enemy.EnemyType.knight, imageNamed: "knight-0")
-            enemy.size = CGSize(width: 56, height: 56)
-            enemy.run(SKAction.colorize(with: Graphics.knightColor, colorBlendFactor: 1.0, duration: 0.0))
-            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 24, height: 48))
+            enemy.size = CGSize(width: 60, height: 60)
+            // enemy.run(SKAction.colorize(with: Graphics.knightColor, colorBlendFactor: 1.0, duration: 0.0))
+            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 26, height: 50))
             break
             
         case .catapult:
