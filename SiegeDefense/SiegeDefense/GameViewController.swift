@@ -61,14 +61,21 @@ class GameViewController: UIViewController, GameSceneDelegate {
     }
     
     func levelEnded() {
-        // dismissing game view
+        
+        // dismissing game view controller
         self.dismiss(animated: true, completion: {})
+
         
         scene!.removeAllActions()
         scene!.removeAllChildren()
         
+        
         let levelVC = self.storyboard?.instantiateViewController(withIdentifier: "LevelViewController") as! LevelViewController
         levelVC.player = player!
         self.view?.window?.rootViewController = levelVC
+    }
+    
+    deinit {
+        print("releasing GVC")
     }
 }

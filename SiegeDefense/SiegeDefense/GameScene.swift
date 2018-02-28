@@ -503,6 +503,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func checkEndLevel() {
         if(enemies.count == 0 && level.timer <= 0) {
+            player.levelNum += 1
             gsDel?.player = player
             gsDel?.levelEnded()
         }
