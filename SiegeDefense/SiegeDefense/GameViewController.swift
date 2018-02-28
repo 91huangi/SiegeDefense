@@ -10,20 +10,27 @@ import UIKit
 import SpriteKit
 import GameplayKit
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, GameSceneDelegate {
 
+    weak var scene:GameScene? = GameScene()
+    var player: Player?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
-                
-                // Present the scene
-                view.presentScene(scene)
-            }
+            scene = GameScene(fileNamed: "GameScene")
+            // Set the scale mode to scale to fit the window
+            scene?.scaleMode = .aspectFill
+            scene!.gsDel = self
+            scene!.player = player!
+
+
+            // Present the scene
+            view.presentScene(scene)
+
             
             view.ignoresSiblingOrder = true
             
@@ -51,5 +58,17 @@ class GameViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+    
+    func levelEnded() {
+        // dismissing game view
+        self.dismiss(animated: true, completion: {})
+        
+        scene!.removeAllActions()
+        scene!.removeAllChildren()
+        
+        let levelVC = self.storyboard?.instantiateViewController(withIdentifier: "LevelViewController") as! LevelViewController
+        levelVC.player = player!
+        self.view?.window?.rootViewController = levelVC
     }
 }

@@ -9,37 +9,62 @@
 import SpriteKit
 import GameplayKit
 
+protocol GameSceneDelegate: class {
+    weak var player: Player? { get set }
+    func levelEnded()
+}
+
+enum objectType:UInt32 {
+    case none=0
+    
+    case wall=1
+    case arrow=2
+    case enemy=4
+    case debris = 8
+    
+    case screenBorder=1024
+}
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    var touchLoc = [UITouch: CGPoint]()
-    var frameNumber = 0
+    weak var gsDel: GameSceneDelegate?
+    
+    
+    var player: Player = Player()
+    
+    var touchLoc: [UITouch: CGPoint] = [:]
+    var frameNumber: Int = 0
 
     
-    var utils = Utils()
+    var utils: Utils = Utils()
     
-    var arrows = [Arrow]()
-    var enemies = [Enemy]()
-    var projectiles = [Projectile]()
-    var wall = Wall(health: 1, maxHealth: 1, imageNamed: "")
-    var clouds = [SKSpriteNode]()
-    var tower = SKSpriteNode()
-    var ground = SKSpriteNode()
+    var arrows: [Arrow] = []
+    var enemies: [Enemy] = []
+    var projectiles: [Projectile] = []
     
-    var towerBottom = CGFloat(0)
-    var heatedShot = true
-    var splitShot = true
-    var archers = 10
+    var clouds:[SKSpriteNode] = []
+    var wall: Wall = Wall(health: 1, maxHealth: 1, imageNamed: "wall-0")
+    var tower: SKSpriteNode = SKSpriteNode()
+    var ground: SKSpriteNode = SKSpriteNode()
     
-    var healthLabel = SKLabelNode()
+    var towerBottom: CGFloat = 0.0
+    var heatedShot: Bool = false
+    var splitShot: Bool = false
+    var archers: Int = 0
     
-    var level = Level(level: 0)
+    var healthLabel: SKLabelNode = SKLabelNode()
+    var levelLabel: SKLabelNode = SKLabelNode()
+    var level: Level = Level(levelNum: -1)
+    
     
     override func didMove(to view: SKView) {
-        
         physicsWorld.contactDelegate = self
         
         self.scene?.backgroundColor = Graphics.skyBlue
         Graphics.loadAnimations()
+        
+        level = Level(levelNum: player.levelNum)
+
 
         ground = SKSpriteNode(imageNamed: "ground")
         ground.position = CGPoint(x: 0, y: -280)
@@ -52,9 +77,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bottomBorder.position = CGPoint(x:0, y:-370)
         bottomBorder.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10000, height: 2))
         bottomBorder.physicsBody!.pinned=true
-        bottomBorder.physicsBody!.categoryBitMask = Level.objectType.screenBorder.rawValue
-        bottomBorder.physicsBody!.contactTestBitMask = Level.objectType.arrow.rawValue | Level.objectType.debris.rawValue
-        bottomBorder.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+        bottomBorder.physicsBody!.categoryBitMask = objectType.screenBorder.rawValue
+        bottomBorder.physicsBody!.contactTestBitMask = objectType.arrow.rawValue | objectType.debris.rawValue
+        bottomBorder.physicsBody!.collisionBitMask = objectType.none.rawValue
         self.addChild(bottomBorder)
         
         // loading tower
@@ -68,16 +93,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         towerBottom = tower.position.y-CGFloat(0.5)*tower.size.height
         
         // loading wall
-        wall = Wall(health: 300, maxHealth: 300, imageNamed: "wall-0")
+        wall = Wall(health: 100, maxHealth: 100, imageNamed: "wall-0")
         wall.size = CGSize(width: 473, height: 350)
         wall.position = CGPoint(x: -325, y: -200)
         wall.zPosition = 1
         self.addChild(wall)
 
+        // loading labels
         healthLabel.position = CGPoint(x: -550, y: 325)
         healthLabel.fontColor = UIColor.black
         healthLabel.fontName = "Arial Bold"
         self.addChild(healthLabel)
+        
+        levelLabel.position = CGPoint(x: 0, y: 325)
+        levelLabel.fontColor = UIColor.black
+        levelLabel.fontName = "Arial Bold"
+        levelLabel.text = "Level "+String(level.levelNum)
+        self.addChild(levelLabel)
         
         
         let numClouds = arc4random_uniform(3)+2
@@ -88,7 +120,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
 
-        level = Level(level: 50)
 
 
     }
@@ -111,8 +142,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cloud.physicsBody!.linearDamping = 0.0
         cloud.physicsBody!.friction = 0.0
         cloud.physicsBody!.affectedByGravity = false
-        cloud.physicsBody!.categoryBitMask = Level.objectType.none.rawValue
-        cloud.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+        cloud.physicsBody!.categoryBitMask = objectType.none.rawValue
+        cloud.physicsBody!.collisionBitMask = objectType.none.rawValue
         clouds.append(cloud)
         self.addChild(cloud)
     }
@@ -153,9 +184,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enemy.position = CGPoint(x: 750+CGFloat(arc4random_uniform(15)), y: towerBottom+CGFloat(Int(arc4random_uniform(100)) - 25))
         
         enemy.xScale = -1
-        enemy.physicsBody!.categoryBitMask = Level.objectType.enemy.rawValue
-        enemy.physicsBody!.contactTestBitMask = Level.objectType.arrow.rawValue
-        enemy.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+        enemy.physicsBody!.categoryBitMask = objectType.enemy.rawValue
+        enemy.physicsBody!.contactTestBitMask = objectType.arrow.rawValue
+        enemy.physicsBody!.collisionBitMask = objectType.none.rawValue
         enemy.physicsBody!.affectedByGravity = false
         
         if(enemy.position.y - CGFloat(0.5)*enemy.size.height >= towerBottom) {
@@ -183,9 +214,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         arrow.physicsBody!.velocity.dy = 3*power*sin(angle)
         arrow.physicsBody!.affectedByGravity=true
         arrow.physicsBody!.allowsRotation = true
-        arrow.physicsBody!.categoryBitMask = Level.objectType.arrow.rawValue
-        arrow.physicsBody!.contactTestBitMask = Level.objectType.enemy.rawValue | Level.objectType.screenBorder.rawValue
-        arrow.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+        arrow.physicsBody!.categoryBitMask = objectType.arrow.rawValue
+        arrow.physicsBody!.contactTestBitMask = objectType.enemy.rawValue | objectType.screenBorder.rawValue
+        arrow.physicsBody!.collisionBitMask = objectType.none.rawValue
         arrow.zPosition = 4
         arrows.append(arrow)
         self.addChild(arrow)
@@ -207,7 +238,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         projectile.physicsBody?.pinned = false
         projectile.physicsBody?.affectedByGravity = true
         projectile.physicsBody?.velocity = CGVector(dx: -1200, dy: 500)
-        projectile.physicsBody?.collisionBitMask = Level.objectType.none.rawValue
+        projectile.physicsBody?.collisionBitMask = objectType.none.rawValue
         projectile.zPosition = 3
         
         
@@ -242,6 +273,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 enemy.removeFromParent()
                 enemies.remove(at: enemies.index(where: {$0==enemy})!)
                 continue
+            }
+            if(enemy.position.x+CGFloat(0.5)*enemy.size.width < -667.0) {
+                print("game over")
+                exit(0)
             }
             switch(enemy.state) {
             case .moving:
@@ -312,9 +347,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             pixel.physicsBody!.affectedByGravity = true
             pixel.physicsBody!.mass = 0.1
             
-            pixel.physicsBody!.categoryBitMask = Level.objectType.debris.rawValue
-            pixel.physicsBody!.contactTestBitMask = Level.objectType.screenBorder.rawValue
-            pixel.physicsBody!.collisionBitMask = Level.objectType.none.rawValue
+            pixel.physicsBody!.categoryBitMask = objectType.debris.rawValue
+            pixel.physicsBody!.contactTestBitMask = objectType.screenBorder.rawValue
+            pixel.physicsBody!.collisionBitMask = objectType.none.rawValue
 
             
             self.addChild(pixel)
@@ -399,32 +434,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
 
         switch(categoryMask) {
-        case Level.objectType.arrow.rawValue | Level.objectType.enemy.rawValue:
-            if(contact.bodyA.categoryBitMask == Level.objectType.arrow.rawValue) {
+        case objectType.arrow.rawValue | objectType.enemy.rawValue:
+            if(contact.bodyA.categoryBitMask == objectType.arrow.rawValue) {
                 contact.bodyA.node?.removeFromParent()
             } else {
                 contact.bodyB.node?.removeFromParent()
             }
             let arrowIndex = arrows.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!
             let enemy = enemies[enemies.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!]
-            if(arrows[arrowIndex].heatedShot && enemy.type == .catapult) {
-                enemy.health -= 4
-            } else {
-                enemy.health -= 1
+            
+            // if enemy is not behind the tower
+            if(enemy.zPosition == 4 || abs(enemy.position.x-tower.position.x) >= CGFloat(0.5)*tower.size.width) {
+                if(arrows[arrowIndex].heatedShot && enemy.type == .catapult) {
+                    enemy.health -= 4
+                } else {
+                    enemy.health -= 1
+                }
+                arrows.remove(at: arrowIndex)
+                arrowHitAnimation(enemy: enemy)
             }
-            arrows.remove(at: arrowIndex)
-            arrowHitAnimation(enemy: enemy)
+
             break
-        case Level.objectType.arrow.rawValue | Level.objectType.screenBorder.rawValue:
-            if(contact.bodyA.categoryBitMask == Level.objectType.arrow.rawValue) {
+        case objectType.arrow.rawValue | objectType.screenBorder.rawValue:
+            if(contact.bodyA.categoryBitMask == objectType.arrow.rawValue) {
                 contact.bodyA.node?.removeFromParent()
             } else {
                 contact.bodyB.node?.removeFromParent()
             }
             arrows.remove(at: arrows.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!)
             break
-        case Level.objectType.debris.rawValue | Level.objectType.screenBorder.rawValue:
-            if(contact.bodyA.categoryBitMask == Level.objectType.debris.rawValue) {
+        case objectType.debris.rawValue | objectType.screenBorder.rawValue:
+            if(contact.bodyA.categoryBitMask == objectType.debris.rawValue) {
                 contact.bodyA.node?.removeFromParent()
             } else {
                 contact.bodyB.node?.removeFromParent()
@@ -461,6 +501,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
+    func checkEndLevel() {
+        if(enemies.count == 0 && level.timer <= 0) {
+            gsDel?.player = player
+            gsDel?.levelEnded()
+        }
+    }
+    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         frameNumber = (frameNumber + 1) % 60
@@ -470,23 +517,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         updateEnemies()
         updateProjectiles()
         updateWall()
+        checkEndLevel()
         
         if(frameNumber == 0) {
             level.timer -= 1;
-            
         }
         
-            if(arc4random_uniform(500) < min(30, level.level) && level.timer > 0) {
-                if(level.level <= 3) {
+            if(arc4random_uniform(500) < min(30, level.levelNum) && level.timer > 0) {
+                if(level.levelNum <= 6) {
                     loadEnemy(type: .spearman)
-                } else if (level.level <= 6) {
+                } else if (level.levelNum <= 12) {
                     let rand = arc4random_uniform(2)
                     if(rand < 1) {
                         loadEnemy(type: .spearman)
                     } else {
                         loadEnemy(type: .knight)
                     }
-                } else if (level.level <= 15) {
+                } else if (level.levelNum <= 18) {
                     let rand = arc4random_uniform(5)
                     if(rand < 3) {
                         loadEnemy(type: .spearman)
@@ -517,5 +564,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
 
         }
+    }
+    
+    deinit {
+        print("releasing SKscene")
     }
 }

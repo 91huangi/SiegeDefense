@@ -11,22 +11,13 @@ import SpriteKit
 
 class Level {
     
-    public var level:Int
+    public var levelNum:Int
     public var timer:Int
     
-    init(level: Int) {
-        self.level=level
-        self.timer=20+level
+    init(levelNum: Int) {
+        self.levelNum=levelNum
+        self.timer=20+levelNum
     }
     
-    enum objectType:UInt32 {
-        case none=0
-        
-        case wall=1
-        case arrow=2
-        case enemy=4
-        case debris = 8
-        
-        case screenBorder=1024
-    }
+
 }
