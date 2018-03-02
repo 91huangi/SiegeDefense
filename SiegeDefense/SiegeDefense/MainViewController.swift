@@ -20,6 +20,8 @@ class MainViewController:UIViewController {
         lblStart.isUserInteractionEnabled = true
         lblStart.addGestureRecognizer(startTap)
         
+        
+        Graphics.loadAnimations()
         player = Player()
         
         
@@ -34,6 +36,10 @@ class MainViewController:UIViewController {
         let gameVC = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
         gameVC.player = player
         self.view?.window?.rootViewController = gameVC
+    }
+    
+    deinit {
+        print("releasing MainVC")
     }
         
         

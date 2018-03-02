@@ -13,9 +13,9 @@ import SpriteKit
 class Enemy:SKSpriteNode{
     
     enum EnemyType:Int {
-        case spearman = 0
-        case knight = 1
-        case catapult = 3
+        case spearman = 3
+        case knight = 5
+        case catapult = 8
     }
     
     enum EnemyState:Int {
@@ -33,6 +33,7 @@ class Enemy:SKSpriteNode{
     var attackTimer: CGFloat
     var reloadTimer: CGFloat
     var state: EnemyState
+
     
     init(type: EnemyType, imageNamed: String) {
         self.type = type

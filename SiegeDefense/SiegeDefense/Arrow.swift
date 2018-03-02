@@ -10,10 +10,10 @@ import Foundation
 import SpriteKit
 
 class Arrow: SKSpriteNode {
-    var heatedShot: Bool
+    var userOwned: Bool
     
-    init(heatedShot: Bool, imageNamed: String) {
-        self.heatedShot = heatedShot
+    init(userOwned: Bool, imageNamed: String) {
+        self.userOwned = userOwned
         let texture = SKTexture(imageNamed: imageNamed)
         super.init(texture: texture, color: UIColor.black, size: texture.size())
     }

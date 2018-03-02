@@ -62,12 +62,14 @@ class GameViewController: UIViewController, GameSceneDelegate {
     
     func levelEnded() {
         
+
         // dismissing game view controller
         self.dismiss(animated: true, completion: {})
-
         
-        scene!.removeAllActions()
-        scene!.removeAllChildren()
+        if let view = self.view as! SKView? {
+            view.presentScene(SKScene())
+            // view.removeFromSuperview()
+        }
         
         
         let levelVC = self.storyboard?.instantiateViewController(withIdentifier: "LevelViewController") as! LevelViewController

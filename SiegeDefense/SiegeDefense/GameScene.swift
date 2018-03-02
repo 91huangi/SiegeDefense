@@ -28,15 +28,15 @@ enum objectType:UInt32 {
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     weak var gsDel: GameSceneDelegate?
-    
-    
-    var player: Player = Player()
+    weak var player: Player?
     
     var touchLoc: [UITouch: CGPoint] = [:]
     var frameNumber: Int = 0
 
     
     var utils: Utils = Utils()
+    
+    var bottomBorder:SKSpriteNode = SKSpriteNode()
     
     var arrows: [Arrow] = []
     var enemies: [Enemy] = []
@@ -48,12 +48,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var ground: SKSpriteNode = SKSpriteNode()
     
     var towerBottom: CGFloat = 0.0
-    var heatedShot: Bool = false
-    var splitShot: Bool = false
-    var archers: Int = 0
+    var enemiesKilled: Int = 0
     
     var healthLabel: SKLabelNode = SKLabelNode()
     var levelLabel: SKLabelNode = SKLabelNode()
+    var scoreLabel: SKLabelNode = SKLabelNode()
     var level: Level = Level(levelNum: -1)
     
     
@@ -61,9 +60,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         
         self.scene?.backgroundColor = Graphics.skyBlue
-        Graphics.loadAnimations()
         
-        level = Level(levelNum: player.levelNum)
+        level = Level(levelNum: (player?.levelNum)!)
 
 
         ground = SKSpriteNode(imageNamed: "ground")
@@ -73,7 +71,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(ground)
         
         // adding scene border
-        let bottomBorder = SKSpriteNode()
         bottomBorder.position = CGPoint(x:0, y:-370)
         bottomBorder.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10000, height: 2))
         bottomBorder.physicsBody!.pinned=true
@@ -93,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         towerBottom = tower.position.y-CGFloat(0.5)*tower.size.height
         
         // loading wall
-        wall = Wall(health: 100, maxHealth: 100, imageNamed: "wall-0")
+        wall = Wall(health: player!.wallHealth, maxHealth: player!.wallMaxHealth, imageNamed: "wall-0")
         wall.size = CGSize(width: 473, height: 350)
         wall.position = CGPoint(x: -325, y: -200)
         wall.zPosition = 1
@@ -111,6 +108,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         levelLabel.text = "Level "+String(level.levelNum)
         self.addChild(levelLabel)
         
+        scoreLabel.position = CGPoint(x: 550, y: 325)
+        scoreLabel.fontColor = UIColor.black
+        scoreLabel.fontName = "Arial Bold"
+        self.addChild(scoreLabel)
         
         let numClouds = arc4random_uniform(3)+2
         
@@ -200,10 +201,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    func loadArrow(power: CGFloat, angle: CGFloat, heatedShot: Bool) {
-        var arrow = Arrow(heatedShot: heatedShot, imageNamed: "arrow")
+    func loadArrow(power: CGFloat, angle: CGFloat, userOwned: Bool) {
+        var arrow = Arrow(userOwned: userOwned, imageNamed: "arrow")
         arrow.size = CGSize(width: 30, height: 3)
-        if(arrow.heatedShot) {
+        if(player!.heatedShot && userOwned) {
             arrow.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0))
         } else {
             arrow.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
@@ -269,11 +270,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func updateEnemies() {
         for enemy in enemies {
-            if(enemy.health <= 0) {
-                enemy.removeFromParent()
-                enemies.remove(at: enemies.index(where: {$0==enemy})!)
-                continue
-            }
             if(enemy.position.x+CGFloat(0.5)*enemy.size.width < -667.0) {
                 print("game over")
                 exit(0)
@@ -318,7 +314,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func arrowHitAnimation(enemy: Enemy) {
+    func arrowHit(arrow: Arrow, enemy: Enemy) {
         var debrisColor: UIColor
         switch (enemy.type) {
         case .spearman:
@@ -330,6 +326,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         default:
             debrisColor = UIColor.red
             break
+        }
+        
+        // kill enemy
+        if(enemy.health <= 0) {
+            enemy.removeAllActions()
+            enemy.removeFromParent()
+            enemies.remove(at: enemies.index(where: {$0==enemy})!)
+            if(arrow.userOwned) {
+                level.score += enemy.type.rawValue
+            }
         }
         
         // loading debris pixels
@@ -382,6 +388,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break
         }
         
+        
         switch(enemy.state) {
         case .moving:
             enemy.run(SKAction.repeatForever(SKAction.animate(with: movingTextures, timePerFrame: 0.1, resize: false, restore: true)), withKey: "enemyMoving")
@@ -419,12 +426,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if(utils.distance(p1: location, p2: startLoc) >= 25) {
                 let power = min(utils.distance(p1: location, p2: startLoc), 500)
                 let angle = utils.arctan(opp: (startLoc.y-location.y), adj: (startLoc.x-location.x))
-                if(splitShot) {
-                    loadArrow(power: power, angle: angle-CGFloat(0.1), heatedShot: heatedShot)
-                    loadArrow(power: power, angle: angle+CGFloat(0.1), heatedShot: heatedShot)
+                if(player!.splitShot) {
+                    loadArrow(power: power, angle: angle-CGFloat(0.1), userOwned: true)
+                    loadArrow(power: power, angle: angle+CGFloat(0.1), userOwned: true)
                     
                 }
-                loadArrow(power: power, angle: angle, heatedShot: heatedShot)
+                loadArrow(power: power, angle: angle, userOwned: true)
             }
         }
     }
@@ -435,23 +442,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         switch(categoryMask) {
         case objectType.arrow.rawValue | objectType.enemy.rawValue:
-            if(contact.bodyA.categoryBitMask == objectType.arrow.rawValue) {
-                contact.bodyA.node?.removeFromParent()
-            } else {
-                contact.bodyB.node?.removeFromParent()
-            }
             let arrowIndex = arrows.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!
             let enemy = enemies[enemies.index(where: {$0==contact.bodyA.node || $0==contact.bodyB.node})!]
             
             // if enemy is not behind the tower
             if(enemy.zPosition == 4 || abs(enemy.position.x-tower.position.x) >= CGFloat(0.5)*tower.size.width) {
-                if(arrows[arrowIndex].heatedShot && enemy.type == .catapult) {
+                if(arrows[arrowIndex].userOwned && player!.heatedShot) {
                     enemy.health -= 4
                 } else {
                     enemy.health -= 1
                 }
+                arrowHit(arrow: arrows[arrowIndex], enemy: enemy)
                 arrows.remove(at: arrowIndex)
-                arrowHitAnimation(enemy: enemy)
+                if(contact.bodyA.categoryBitMask == objectType.arrow.rawValue) {
+                    contact.bodyA.node?.removeFromParent()
+                } else {
+                    contact.bodyB.node?.removeFromParent()
+                }
             }
 
             break
@@ -477,7 +484,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func updateWall() {
         wall.health = max(0, wall.health)
-        healthLabel.text = String(wall.health) + "/" + String(wall.maxHealth)
         let healthPercent = CGFloat(wall.health) / CGFloat(wall.maxHealth)
         if(healthPercent > 0.5 && healthPercent <= 0.75 ) {
             wall.texture = SKTexture(imageNamed: "wall-1")
@@ -500,14 +506,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func updateLabels() {
+        healthLabel.text = String(wall.health) + "/" + String(wall.maxHealth)
+        scoreLabel.text = "Score: "+String(level.score)
+    }
+    
     
     func checkEndLevel() {
         if(enemies.count == 0 && level.timer <= 0) {
-            player.levelNum += 1
+            player!.score += level.score
+            player!.gold += level.score
+            player!.wallHealth = wall.health
+            player!.levelNum += 1
+            clean()
             gsDel?.player = player
             gsDel?.levelEnded()
         }
     }
+    
+    func clean() {
+        self.removeAllActions()
+        self.removeAllChildren()
+        bottomBorder = SKSpriteNode()
+        healthLabel = SKLabelNode()
+        levelLabel = SKLabelNode()
+        tower = SKSpriteNode()
+        ground = SKSpriteNode()
+        level = Level(levelNum: -1)
+        utils = Utils()
+    }
+    
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
@@ -518,6 +547,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         updateEnemies()
         updateProjectiles()
         updateWall()
+        updateLabels()
         checkEndLevel()
         
         if(frameNumber == 0) {
@@ -555,12 +585,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
 
 
-        if(frameNumber == 0 && archers > 0) {
-            for _ in 1...archers {
+        if(frameNumber == 0 && player!.archers > 0) {
+            for _ in 1...player!.archers {
                 if(arc4random_uniform(2) > 0) {
                     let power = CGFloat(200+arc4random_uniform(250))
                     let angle = utils.pi*(CGFloat(arc4random_uniform(25))*CGFloat(0.01))
-                    loadArrow(power: power, angle: angle, heatedShot: false)
+                    loadArrow(power: power, angle: angle, userOwned: false)
                 }
             }
 

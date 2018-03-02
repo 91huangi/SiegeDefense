@@ -13,10 +13,12 @@ class Level {
     
     public var levelNum:Int
     public var timer:Int
+    public var score:Int
     
     init(levelNum: Int) {
         self.levelNum=levelNum
         self.timer=20+levelNum
+        self.score = 0
     }
     
 
