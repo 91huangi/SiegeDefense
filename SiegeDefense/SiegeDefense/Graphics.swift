@@ -16,7 +16,7 @@ class Graphics {
     public static var knightColor = UIColor.darkGray
     public static var skyBlue = UIColor(red: 0.1, green: 0.58, blue: 0.80, alpha: 1.0)
     
-    public static var towerFrames = [SKTexture]()
+    public static var flagFrames = [SKTexture]()
     public static var spearmanMoving = [SKTexture]()
     public static var spearmanAttacking = [SKTexture]()
     public static var spearmanReloading = [SKTexture]()
@@ -30,13 +30,13 @@ class Graphics {
     public static var clouds = [SKTexture]()
     
     static func loadAnimations() {
-        towerFrames.append(SKTexture(imageNamed: "tower-0"))
-        towerFrames.append(SKTexture(imageNamed: "tower-1"))
-        towerFrames.append(SKTexture(imageNamed: "tower-2"))
-        towerFrames.append(SKTexture(imageNamed: "tower-3"))
-        towerFrames.append(SKTexture(imageNamed: "tower-4"))
-        towerFrames.append(SKTexture(imageNamed: "tower-5"))
-        towerFrames.append(SKTexture(imageNamed: "tower-6"))
+        flagFrames.append(SKTexture(imageNamed: "flag-0"))
+        flagFrames.append(SKTexture(imageNamed: "flag-1"))
+        flagFrames.append(SKTexture(imageNamed: "flag-2"))
+        flagFrames.append(SKTexture(imageNamed: "flag-3"))
+        flagFrames.append(SKTexture(imageNamed: "flag-4"))
+        flagFrames.append(SKTexture(imageNamed: "flag-5"))
+        flagFrames.append(SKTexture(imageNamed: "flag-6"))
         
         spearmanMoving.append(SKTexture(imageNamed: "spearman-0"))
         spearmanMoving.append(SKTexture(imageNamed: "spearman-1"))
@@ -82,11 +82,8 @@ class Graphics {
         
         
         catapultMoving.append(SKTexture(imageNamed: "catapult-0"))
-        catapultMoving.append(SKTexture(imageNamed: "catapult-1"))
         catapultMoving.append(SKTexture(imageNamed: "catapult-2"))
-        catapultMoving.append(SKTexture(imageNamed: "catapult-3"))
         catapultMoving.append(SKTexture(imageNamed: "catapult-4"))
-        catapultMoving.append(SKTexture(imageNamed: "catapult-5"))
         
         catapultAttacking.append(SKTexture(imageNamed: "catapult-6"))
         catapultAttacking.append(SKTexture(imageNamed: "catapult-7"))

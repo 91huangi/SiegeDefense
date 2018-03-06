@@ -72,45 +72,120 @@ class LevelViewController:UIViewController {
     func updateLabels() {
         lblGold.text = "Gold: "+String(player!.gold)
         lblWallHealth.text = String(player!.wallHealth) + "/"+String(player!.wallMaxHealth)
+        if(player!.splitShot) {
+            lblSplitShot.textColor = UIColor.darkGray
+        }
+        if(player!.heatedShot) {
+            lblHeatedShot.textColor = UIColor.darkGray
+        }
+        if(player!.wallMaxHealth == 300) {
+            lblMasonry.textColor = UIColor.darkGray
+        }
+        if(player!.archeryRange) {
+            lblArcheryRange.textColor = UIColor.darkGray
+        }
+        if(player!.archers >= 10) {
+            lblHireArcher.textColor = UIColor.darkGray
+        }
+    }
+    
+    func displayMessage(message: String) {
+        lblMessage.text = message
+        lblMessage.isHidden = false
     }
     
     func onTapSplitShot(sender: UITapGestureRecognizer) {
+        if(lblSplitShot.textColor == UIColor.darkGray) {
+            return
+        }
+        if(player!.gold < 150) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.gold -= 150
         player!.splitShot = true
         updateLabels()
     }
     
     func onTapHeatedShot(sender: UITapGestureRecognizer) {
+        if(lblHeatedShot.textColor == UIColor.darkGray) {
+            return
+        }
+        if(player!.gold < 500) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.gold -= 500
         player!.heatedShot = true
         updateLabels()
     }
     
     func onTapMasonry(sender: UITapGestureRecognizer) {
+        if(lblMasonry.textColor == UIColor.darkGray) {
+            return
+        }
+        if(player!.gold < 500) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.wallMaxHealth = 300
         player!.gold -= 500
         updateLabels()
     }
     
     func onTapRepair10(sender: UITapGestureRecognizer) {
+        if(player!.wallHealth >= player!.wallMaxHealth) {
+            displayMessage(message: "Wall already fully repaired")
+            return
+        }
+        if(player!.gold < 50) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.wallHealth = min(player!.wallHealth+10, player!.wallMaxHealth)
         player!.gold -= 50
         updateLabels()
     }
     
     func onTapRepair50(sender: UITapGestureRecognizer) {
+        if(player!.wallHealth >= player!.wallMaxHealth) {
+            displayMessage(message: "Wall already fully repaired")
+            return
+        }
+        if(player!.gold < 200) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.wallHealth = min(player!.wallHealth+50, player!.wallMaxHealth)
         player!.gold -= 200
         updateLabels()
     }
     
     func onTapArcheryRange(sender: UITapGestureRecognizer) {
+        if(lblArcheryRange.textColor == UIColor.darkGray) {
+            return
+        }
+        if(player!.gold < 2000) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.archeryRange = true
         player!.gold -= 2000
         updateLabels()
     }
     
     func onTapHireArcher(sender: UITapGestureRecognizer) {
+        if(lblHireArcher.textColor == UIColor.darkGray) {
+            return
+        }
+        if(!player!.archeryRange) {
+            displayMessage(message: "Must construct archery range before hiring archers")
+            return
+        }
+        if(player!.gold < 500) {
+            displayMessage(message: "Not enough gold for purchase")
+            return
+        }
         player!.archers += 1
         player!.gold -= 500
         lblHireArcher.text = "Hire Archer "+String(player!.archers)+"/10 - 500g"

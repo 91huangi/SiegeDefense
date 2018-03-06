@@ -41,11 +41,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var arrows: [Arrow] = []
     var enemies: [Enemy] = []
     var projectiles: [Projectile] = []
+    var ground: SKSpriteNode = SKSpriteNode()
+    var tower: SKSpriteNode = SKSpriteNode()
+    var line: SKSpriteNode = SKSpriteNode()
+    var flag: SKSpriteNode = SKSpriteNode()
     
     var clouds:[SKSpriteNode] = []
     var wall: Wall = Wall(health: 1, maxHealth: 1, imageNamed: "wall-0")
-    var tower: SKSpriteNode = SKSpriteNode()
-    var ground: SKSpriteNode = SKSpriteNode()
     
     var towerBottom: CGFloat = 0.0
     var enemiesKilled: Int = 0
@@ -80,14 +82,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(bottomBorder)
         
         // loading tower
-        tower = SKSpriteNode(imageNamed: "tower-0")
+        tower = SKSpriteNode(imageNamed: "tower")
         tower.size = CGSize(width: 175, height: 350)
-        tower.position = CGPoint(x: -550, y: -125)
+        tower.position = CGPoint(x: -550, y: -135)
         tower.zPosition = 3
-        tower.run(SKAction.repeatForever(SKAction.animate(with: Graphics.towerFrames, timePerFrame: 0.1, resize: false, restore: true)), withKey: "towerAnimation")
+        towerBottom = tower.position.y-CGFloat(0.5)*tower.size.height
         self.addChild(tower)
         
-        towerBottom = tower.position.y-CGFloat(0.5)*tower.size.height
+        
+        //loading line
+        line = SKSpriteNode(imageNamed: "line")
+        line.size = CGSize(width: 202, height: 190)
+        line.zPosition = 1
+        line.position = CGPoint(x: tower.position.x + 25, y: -280)
+        line.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0))
+        self.addChild(line)
+        
+        //loading flag
+        flag = SKSpriteNode(imageNamed: "flag-0")
+        flag.size = CGSize(width: 87, height: 55)
+        flag.position = CGPoint(x: tower.position.x+3, y: tower.position.y+192)
+        flag.zPosition = 4
+        flag.run(SKAction.repeatForever(SKAction.animate(with: Graphics.flagFrames, timePerFrame: 0.1, resize: false, restore: true)), withKey: "flag-animation")
+        flag.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0))
+        self.addChild(flag)
+        
+
+        
         
         // loading wall
         wall = Wall(health: player!.wallHealth, maxHealth: player!.wallMaxHealth, imageNamed: "wall-0")
@@ -210,7 +231,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             arrow.run(SKAction.colorize(with: UIColor.black, colorBlendFactor: 1.0, duration: 0.0))
         }
         arrow.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 30, height: 3))
-        arrow.position = CGPoint(x: tower.position.x, y: tower.position.y+50)
+        arrow.position = CGPoint(x: tower.position.x, y: tower.position.y+70)
         arrow.physicsBody!.velocity.dx = 3*power*cos(angle)
         arrow.physicsBody!.velocity.dy = 3*power*sin(angle)
         arrow.physicsBody!.affectedByGravity=true
@@ -218,11 +239,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         arrow.physicsBody!.categoryBitMask = objectType.arrow.rawValue
         arrow.physicsBody!.contactTestBitMask = objectType.enemy.rawValue | objectType.screenBorder.rawValue
         arrow.physicsBody!.collisionBitMask = objectType.none.rawValue
-        arrow.zPosition = 4
+        arrow.zPosition = 5
         arrows.append(arrow)
         self.addChild(arrow)
     }
     
+    func gameOver() {
+        line.removeFromParent()
+        flag.run(SKAction.colorize(with: UIColor.white, colorBlendFactor: 1.0, duration: 0.0))
+    }
     func loadProjectile(owner: Enemy) {
         
         
@@ -270,9 +295,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func updateEnemies() {
         for enemy in enemies {
-            if(enemy.position.x+CGFloat(0.5)*enemy.size.width < -667.0) {
-                print("game over")
-                exit(0)
+            if(enemy.position.x < tower.position.x + 25 - (ground.position.y-enemy.position.y)) {
+                gameOver()
             }
             switch(enemy.state) {
             case .moving:
@@ -558,24 +582,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if(level.levelNum <= 6) {
                     loadEnemy(type: .spearman)
                 } else if (level.levelNum <= 12) {
-                    let rand = arc4random_uniform(2)
-                    if(rand < 1) {
+                    let rand = arc4random_uniform(7)
+                    if(rand < 5) {
                         loadEnemy(type: .spearman)
                     } else {
                         loadEnemy(type: .knight)
                     }
                 } else if (level.levelNum <= 18) {
-                    let rand = arc4random_uniform(5)
+                    let rand = arc4random_uniform(10)
                     if(rand < 3) {
                         loadEnemy(type: .spearman)
                     } else {
                         loadEnemy(type: .knight)
                     }
                 } else {
-                    let rand = arc4random_uniform(20)
+                    let rand = arc4random_uniform(30)
                     if (rand < 9) {
                         loadEnemy(type: .spearman)
-                    } else if (rand < 19)  {
+                    } else if (rand < 29)  {
                         loadEnemy(type: .knight)
                     } else {
                         loadEnemy(type: .catapult)
