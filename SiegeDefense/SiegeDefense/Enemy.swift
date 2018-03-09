@@ -13,9 +13,9 @@ import SpriteKit
 class Enemy:SKSpriteNode{
     
     enum EnemyType:Int {
-        case spearman = 3
-        case knight = 5
-        case catapult = 8
+        case spearman = 1
+        case knight = 3
+        case catapult = 5
     }
     
     enum EnemyState:Int {

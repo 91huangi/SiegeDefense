@@ -60,7 +60,7 @@ class GameViewController: UIViewController, GameSceneDelegate {
         return true
     }
     
-    func levelEnded() {
+    func levelEnded(backToMain: Bool) {
         
 
         // dismissing game view controller
@@ -71,10 +71,15 @@ class GameViewController: UIViewController, GameSceneDelegate {
             // view.removeFromSuperview()
         }
         
-        
-        let levelVC = self.storyboard?.instantiateViewController(withIdentifier: "LevelViewController") as! LevelViewController
-        levelVC.player = player!
-        self.view?.window?.rootViewController = levelVC
+        if(backToMain) {
+            let mainVC = self.storyboard?.instantiateViewController(withIdentifier: "MainViewController") as! UIViewController
+            self.view?.window?.rootViewController = mainVC
+        } else {
+            let levelVC = self.storyboard?.instantiateViewController(withIdentifier: "LevelViewController") as! LevelViewController
+            levelVC.player = player!
+            self.view?.window?.rootViewController = levelVC
+        }
+
     }
     
     deinit {

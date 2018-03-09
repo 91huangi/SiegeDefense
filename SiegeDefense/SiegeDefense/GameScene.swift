@@ -11,7 +11,7 @@ import GameplayKit
 
 protocol GameSceneDelegate: class {
     weak var player: Player? { get set }
-    func levelEnded()
+    func levelEnded(backToMain: Bool)
 }
 
 enum objectType:UInt32 {
@@ -50,12 +50,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var wall: Wall = Wall(health: 1, maxHealth: 1, imageNamed: "wall-0")
     
     var towerBottom: CGFloat = 0.0
+    var enemiesHit: Int = 0
+    var arrowsShot: Int = 0
     var enemiesKilled: Int = 0
+    var levelComplete: Bool = false
     
     var healthLabel: SKLabelNode = SKLabelNode()
     var levelLabel: SKLabelNode = SKLabelNode()
-    var scoreLabel: SKLabelNode = SKLabelNode()
+    var enemiesKilledLabel: SKLabelNode = SKLabelNode()
     var level: Level = Level(levelNum: -1)
+    
+    var levelOverBackground: SKSpriteNode = SKSpriteNode()
+    var levelOverMainLabel: SKLabelNode = SKLabelNode()
+    var levelOverSubLabel1: SKLabelNode = SKLabelNode()
+    var levelOverSubLabel2: SKLabelNode = SKLabelNode()
     
     
     override func didMove(to view: SKView) {
@@ -107,6 +115,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         flag.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0))
         self.addChild(flag)
         
+        // loading level over background and labels
+        let blackRect = SKShapeNode(rectOf: CGSize(width: 1334, height: 750))
+        blackRect.fillColor = UIColor.black
+        let blackBackground = self.view?.texture(from: blackRect)
+        levelOverBackground = SKSpriteNode(texture: blackBackground)
+        levelOverBackground.position = CGPoint(x: 0, y: 0)
+        levelOverBackground.alpha = 0.0
+        levelOverBackground.zPosition = 10
+        self.addChild(levelOverBackground)
+        levelOverMainLabel.text = "Game Over"
+        levelOverMainLabel.fontColor = UIColor.white
+        levelOverMainLabel.position = CGPoint(x: 0, y: 100)
+        levelOverMainLabel.zPosition = 11
+        levelOverMainLabel.alpha = 0.0
+        levelOverMainLabel.fontSize = 48
+        levelOverMainLabel.fontName = "Arial Bold"
+        self.addChild(levelOverMainLabel)
+        levelOverSubLabel1.text = "Accuracy: "
+        levelOverSubLabel1.fontColor = UIColor.white
+        levelOverSubLabel1.position = CGPoint(x: 0, y: 0)
+        levelOverSubLabel1.zPosition = 11
+        levelOverSubLabel1.alpha = 0.0
+        levelOverSubLabel1.fontSize = 32
+        levelOverSubLabel1.fontName = "Arial"
+        self.addChild(levelOverSubLabel1)
+        levelOverSubLabel2.text = "Level Score: "
+        levelOverSubLabel2.fontColor = UIColor.white
+        levelOverSubLabel2.position = CGPoint(x: 0, y: -100)
+        levelOverSubLabel2.zPosition = 11
+        levelOverSubLabel2.alpha = 0.0
+        levelOverSubLabel2.fontSize = 32
+        levelOverSubLabel2.fontName = "Arial"
+        self.addChild(levelOverSubLabel2)
+        
 
         
         
@@ -129,10 +171,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         levelLabel.text = "Level "+String(level.levelNum)
         self.addChild(levelLabel)
         
-        scoreLabel.position = CGPoint(x: 550, y: 325)
-        scoreLabel.fontColor = UIColor.black
-        scoreLabel.fontName = "Arial Bold"
-        self.addChild(scoreLabel)
+        enemiesKilledLabel.position = CGPoint(x: 475, y: 325)
+        enemiesKilledLabel.fontColor = UIColor.black
+        enemiesKilledLabel.fontName = "Arial Bold"
+        self.addChild(enemiesKilledLabel)
         
         let numClouds = arc4random_uniform(3)+2
         
@@ -185,9 +227,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break
         case .knight:
             enemy = Enemy(type: Enemy.EnemyType.knight, imageNamed: "knight-0")
-            enemy.size = CGSize(width: 60, height: 60)
-            // enemy.run(SKAction.colorize(with: Graphics.knightColor, colorBlendFactor: 1.0, duration: 0.0))
-            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 26, height: 50))
+            enemy.size = CGSize(width: 66, height: 66)
+            enemy.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 29, height: 55))
             break
             
         case .catapult:
@@ -225,6 +266,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func loadArrow(power: CGFloat, angle: CGFloat, userOwned: Bool) {
         var arrow = Arrow(userOwned: userOwned, imageNamed: "arrow")
         arrow.size = CGSize(width: 30, height: 3)
+        if(userOwned) {
+            arrowsShot += 1
+        }
         if(player!.heatedShot && userOwned) {
             arrow.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0))
         } else {
@@ -245,9 +289,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func gameOver() {
-        line.removeFromParent()
-        flag.run(SKAction.colorize(with: UIColor.white, colorBlendFactor: 1.0, duration: 0.0))
+        levelOverBackground.run(SKAction.fadeAlpha(to: 1.0, duration: 0.3))
+        levelOverMainLabel.run(SKAction.fadeAlpha(to: 1.0, duration: 0.3))
     }
+    
+    
     func loadProjectile(owner: Enemy) {
         
         
@@ -339,6 +385,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func arrowHit(arrow: Arrow, enemy: Enemy) {
+        
         var debrisColor: UIColor
         switch (enemy.type) {
         case .spearman:
@@ -359,6 +406,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemies.remove(at: enemies.index(where: {$0==enemy})!)
             if(arrow.userOwned) {
                 level.score += enemy.type.rawValue
+                enemiesKilled += 1
+                enemiesHit += 1
             }
         }
         
@@ -435,6 +484,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if(levelOverBackground.alpha >= 0.99) {
+            if(levelOverMainLabel.text == "Level Complete") {
+                endLevel(gameOver: false)
+            } else {
+                endLevel(gameOver: true)
+            }
+        }
         for t in touches {
             let location = t.location(in: self)
             touchLoc[t]=location
@@ -453,7 +509,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if(player!.splitShot) {
                     loadArrow(power: power, angle: angle-CGFloat(0.1), userOwned: true)
                     loadArrow(power: power, angle: angle+CGFloat(0.1), userOwned: true)
-                    
                 }
                 loadArrow(power: power, angle: angle, userOwned: true)
             }
@@ -532,19 +587,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func updateLabels() {
         healthLabel.text = String(wall.health) + "/" + String(wall.maxHealth)
-        scoreLabel.text = "Score: "+String(level.score)
+        enemiesKilledLabel.text = "Enemies Killed: "+String(enemiesKilled)
     }
     
     
+    func endLevel(gameOver: Bool) {
+
+        clean()
+        gsDel?.player = player
+        gsDel?.levelEnded(backToMain: gameOver)
+    }
+    
     func checkEndLevel() {
-        if(enemies.count == 0 && level.timer <= 0) {
-            player!.score += level.score
-            player!.gold += level.score
+        if(enemies.count == 0 && level.timer <= 0 && !levelComplete) {
+            var accuracy: Double = 0.0
+            if(arrowsShot > 0) {
+                accuracy = min(1.0, Double(enemiesHit) / Double(arrowsShot))
+            } else {
+                accuracy = 1.0
+            }
+            let levelScore = Int(Double(level.score) * (1.0+accuracy))
+            player!.score += levelScore
+            player!.gold += levelScore
             player!.wallHealth = wall.health
             player!.levelNum += 1
-            clean()
-            gsDel?.player = player
-            gsDel?.levelEnded()
+            
+            levelOverBackground.run(SKAction.fadeAlpha(to: 1.0, duration: 0.3))
+            levelOverMainLabel.text = "Level Complete"
+            levelOverMainLabel.run(SKAction.fadeAlpha(to: 1.0, duration: 0.3))
+            levelOverSubLabel1.text = "Accuracy: " + String(describing: Int(100.0*accuracy)) + "%"
+            levelOverSubLabel1.run(SKAction.fadeAlpha(to: 1.0, duration: 0.3))
+            levelOverSubLabel2.text = "Level Score: " + String(levelScore)
+            levelOverSubLabel2.run(SKAction.fadeAlpha(to: 1.0, duration: 0.3))
+            
+            levelComplete = true
         }
     }
     

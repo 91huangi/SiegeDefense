@@ -32,7 +32,7 @@ class MainViewController:UIViewController {
         // dismissing game view
         self.dismiss(animated: true, completion: {})
         
-        player!.levelNum = 10
+        player!.levelNum = 7
         let gameVC = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
         gameVC.player = player
         self.view?.window?.rootViewController = gameVC

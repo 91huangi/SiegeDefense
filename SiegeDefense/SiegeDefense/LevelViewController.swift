@@ -70,6 +70,7 @@ class LevelViewController:UIViewController {
     }
     
     func updateLabels() {
+        lblMessage.isHidden = true
         lblGold.text = "Gold: "+String(player!.gold)
         lblWallHealth.text = String(player!.wallHealth) + "/"+String(player!.wallMaxHealth)
         if(player!.splitShot) {
@@ -138,12 +139,12 @@ class LevelViewController:UIViewController {
             displayMessage(message: "Wall already fully repaired")
             return
         }
-        if(player!.gold < 50) {
+        if(player!.gold < 25) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
         player!.wallHealth = min(player!.wallHealth+10, player!.wallMaxHealth)
-        player!.gold -= 50
+        player!.gold -= 25
         updateLabels()
     }
     
@@ -152,12 +153,12 @@ class LevelViewController:UIViewController {
             displayMessage(message: "Wall already fully repaired")
             return
         }
-        if(player!.gold < 200) {
+        if(player!.gold < 100) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
         player!.wallHealth = min(player!.wallHealth+50, player!.wallMaxHealth)
-        player!.gold -= 200
+        player!.gold -= 100
         updateLabels()
     }
     
