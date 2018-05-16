@@ -9,9 +9,11 @@
 import Foundation
 
 class Player {
+    static var player: Player = Player()
+    
     var score:Int
     var gold:Int
-    var heatedShot: Bool
+    var bodkinArrow: Bool
     var splitShot: Bool
     var archers: Int
     var archeryRange: Bool
@@ -20,10 +22,10 @@ class Player {
     var wallMaxHealth: Int
     
     init() {
-        self.levelNum = 0
+        self.levelNum = 1
         self.score = 0
         self.gold = 0
-        self.heatedShot = false
+        self.bodkinArrow = false
         self.splitShot = false
         self.archers = 0
         self.archeryRange = false

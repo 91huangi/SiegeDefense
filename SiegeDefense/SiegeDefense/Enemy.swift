@@ -13,8 +13,10 @@ import SpriteKit
 class Enemy:SKSpriteNode{
     
     enum EnemyType:Int {
+        case target = 0
         case spearman = 1
         case knight = 3
+        case ram = 4
         case catapult = 5
     }
     
@@ -27,7 +29,7 @@ class Enemy:SKSpriteNode{
     var enemySpeed: CGFloat
     var attack: CGFloat
     var range: CGFloat
-    var health: Int
+    var health: CGFloat
     var type: EnemyType
     var timer: CGFloat
     var attackTimer: CGFloat
@@ -40,6 +42,15 @@ class Enemy:SKSpriteNode{
         self.state = .moving
         
         switch (type) {
+        case .target:
+            self.enemySpeed = 0.0
+            self.range = 0.0
+            self.health = 1
+            self.timer = 0.0
+            self.attackTimer = 0.0
+            self.reloadTimer = 0.0
+            self.attack = 0.0
+            break
         case .spearman:
             self.enemySpeed = 60.0
             self.range = 0.0
@@ -58,16 +69,23 @@ class Enemy:SKSpriteNode{
             self.reloadTimer = 0.0
             self.attack = 2.0
             break
+        case .ram:
+            self.enemySpeed = 25.0
+            self.range = 0.0
+            self.health = 20
+            self.timer = 0.0
+            self.attackTimer = 10.0
+            self.reloadTimer = 0.0
+            self.attack = 8.0
+            break
         case .catapult:
-            self.enemySpeed = 20.0
-            self.range = 650.0
-            self.health = 10
+            self.enemySpeed = 25.0
+            self.range = 700.0
+            self.health = 15
             self.timer = 0.0
             self.attackTimer = 10.0
             self.reloadTimer = 30.0
-            self.attack = 10.0
-            break
-        default:
+            self.attack = 15.0
             break
         }
         

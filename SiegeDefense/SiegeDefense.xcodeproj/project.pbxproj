@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		2C009E0020460ED700EB9236 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C009DFF20460ED700EB9236 /* Player.swift */; };
-		2C009E072046112B00EB9236 /* misc.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C009E062046112B00EB9236 /* misc.atlas */; };
 		2C009E0D204623C600EB9236 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C009E0C204623C600EB9236 /* MainViewController.swift */; };
 		2C009E112046FD6300EB9236 /* LevelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C009E102046FD6300EB9236 /* LevelViewController.swift */; };
+		2C34338A20A026B900AF1740 /* CreditsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C34338920A026B900AF1740 /* CreditsViewController.swift */; };
 		2C38E6342049C9B200975F09 /* Kingthings Spikeless.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2C38E6332049C9B100975F09 /* Kingthings Spikeless.ttf */; };
 		2C3F4C4B203BA5F000B0FB8B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C4A203BA5F000B0FB8B /* Utils.swift */; };
 		2C3F4C4D203BB9B400B0FB8B /* objects.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F4C4C203BB9B400B0FB8B /* objects.atlas */; };
@@ -19,8 +19,13 @@
 		2C3F4C57203CA07800B0FB8B /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C56203CA07800B0FB8B /* Graphics.swift */; };
 		2C3F4C59203E33A800B0FB8B /* Projectile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3F4C58203E33A800B0FB8B /* Projectile.swift */; };
 		2C4AD0232044F27800002C41 /* Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4AD0222044F27800002C41 /* Arrow.swift */; };
+		2C85CB84209BAFB600239048 /* EnemiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C85CB83209BAFB600239048 /* EnemiesViewController.swift */; };
+		2C9B07C3205357E800029231 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9B07C2205357E800029231 /* MusicPlayer.swift */; };
+		2C9B07C5205358D300029231 /* king-of-thrones.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2C9B07C4205358D200029231 /* king-of-thrones.mp3 */; };
+		2C9B07C9205358E200029231 /* medieval-tradition.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2C9B07C8205358E100029231 /* medieval-tradition.mp3 */; };
+		2C9B07CB205358FB00029231 /* building-adventure.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2C9B07CA205358FB00029231 /* building-adventure.mp3 */; };
 		2CA5EFE62045F59600260FD8 /* enemies.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2CA5EFE52045F59600260FD8 /* enemies.atlas */; };
-		2CD6AF72203E886C001AF474 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD6AF71203E886C001AF474 /* Wall.swift */; };
+		2CD6AF72203E886C001AF474 /* Castle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CD6AF71203E886C001AF474 /* Castle.swift */; };
 		2CE28349203B873B0029C701 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE28348203B873B0029C701 /* AppDelegate.swift */; };
 		2CE2834B203B873B0029C701 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2834A203B873B0029C701 /* GameScene.sks */; };
 		2CE2834D203B873B0029C701 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2834C203B873B0029C701 /* Actions.sks */; };
@@ -31,7 +36,6 @@
 		2CE28364203B873B0029C701 /* SiegeDefenseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE28363203B873B0029C701 /* SiegeDefenseTests.swift */; };
 		2CE2836F203B873B0029C701 /* SiegeDefenseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2836E203B873B0029C701 /* SiegeDefenseUITests.swift */; };
 		2CECCE992049DFDB00A98C50 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CE28352203B873B0029C701 /* Main.storyboard */; };
-		2CECCE9A2049DFF300A98C50 /* shop-icons.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 2CECCE972049DEED00A98C50 /* shop-icons.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,9 +57,9 @@
 
 /* Begin PBXFileReference section */
 		2C009DFF20460ED700EB9236 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
-		2C009E062046112B00EB9236 /* misc.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = misc.atlas; path = ../../misc.atlas; sourceTree = "<group>"; };
 		2C009E0C204623C600EB9236 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2C009E102046FD6300EB9236 /* LevelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelViewController.swift; sourceTree = "<group>"; };
+		2C34338920A026B900AF1740 /* CreditsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsViewController.swift; sourceTree = "<group>"; };
 		2C38E6332049C9B100975F09 /* Kingthings Spikeless.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Kingthings Spikeless.ttf"; path = "../../Kingthings Spikeless.ttf"; sourceTree = "<group>"; };
 		2C3F4C4A203BA5F000B0FB8B /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		2C3F4C4C203BB9B400B0FB8B /* objects.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = objects.atlas; path = ../../objects.atlas; sourceTree = "<group>"; };
@@ -64,8 +68,13 @@
 		2C3F4C56203CA07800B0FB8B /* Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
 		2C3F4C58203E33A800B0FB8B /* Projectile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projectile.swift; sourceTree = "<group>"; };
 		2C4AD0222044F27800002C41 /* Arrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrow.swift; sourceTree = "<group>"; };
+		2C85CB83209BAFB600239048 /* EnemiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemiesViewController.swift; sourceTree = "<group>"; };
+		2C9B07C2205357E800029231 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
+		2C9B07C4205358D200029231 /* king-of-thrones.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "king-of-thrones.mp3"; path = "../../king-of-thrones.mp3"; sourceTree = "<group>"; };
+		2C9B07C8205358E100029231 /* medieval-tradition.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "medieval-tradition.mp3"; path = "../../medieval-tradition.mp3"; sourceTree = "<group>"; };
+		2C9B07CA205358FB00029231 /* building-adventure.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "building-adventure.mp3"; path = "../../building-adventure.mp3"; sourceTree = "<group>"; };
 		2CA5EFE52045F59600260FD8 /* enemies.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = enemies.atlas; path = ../../enemies.atlas; sourceTree = "<group>"; };
-		2CD6AF71203E886C001AF474 /* Wall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wall.swift; sourceTree = "<group>"; };
+		2CD6AF71203E886C001AF474 /* Castle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Castle.swift; sourceTree = "<group>"; };
 		2CE28345203B873B0029C701 /* SiegeDefense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SiegeDefense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE28348203B873B0029C701 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2CE2834A203B873B0029C701 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -82,7 +91,6 @@
 		2CE2836A203B873B0029C701 /* SiegeDefenseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SiegeDefenseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE2836E203B873B0029C701 /* SiegeDefenseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiegeDefenseUITests.swift; sourceTree = "<group>"; };
 		2CE28370203B873B0029C701 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2CECCE972049DEED00A98C50 /* shop-icons.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = "shop-icons.atlas"; path = "../../shop-icons.atlas"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,30 +141,34 @@
 		2CE28347203B873B0029C701 /* SiegeDefense */ = {
 			isa = PBXGroup;
 			children = (
-				2C38E6332049C9B100975F09 /* Kingthings Spikeless.ttf */,
-				2CE28348203B873B0029C701 /* AppDelegate.swift */,
-				2C3F4C52203BE12100B0FB8B /* Level.swift */,
-				2C3F4C58203E33A800B0FB8B /* Projectile.swift */,
-				2C4AD0222044F27800002C41 /* Arrow.swift */,
-				2CE2834A203B873B0029C701 /* GameScene.sks */,
-				2C009E0C204623C600EB9236 /* MainViewController.swift */,
-				2C009DFF20460ED700EB9236 /* Player.swift */,
-				2C3F4C56203CA07800B0FB8B /* Graphics.swift */,
+				2CA5EFE52045F59600260FD8 /* enemies.atlas */,
+				2C3F4C4C203BB9B400B0FB8B /* objects.atlas */,
+				2C9B07CA205358FB00029231 /* building-adventure.mp3 */,
+				2C9B07C4205358D200029231 /* king-of-thrones.mp3 */,
+				2C9B07C8205358E100029231 /* medieval-tradition.mp3 */,
+				2CE2835A203B873B0029C701 /* Info.plist */,
 				2CE2834C203B873B0029C701 /* Actions.sks */,
-				2CE2834E203B873B0029C701 /* GameScene.swift */,
+				2CE2834A203B873B0029C701 /* GameScene.sks */,
+				2CE28348203B873B0029C701 /* AppDelegate.swift */,
+				2C4AD0222044F27800002C41 /* Arrow.swift */,
+				2CD6AF71203E886C001AF474 /* Castle.swift */,
+				2C34338920A026B900AF1740 /* CreditsViewController.swift */,
+				2C85CB83209BAFB600239048 /* EnemiesViewController.swift */,
 				2C3F4C4E203BBC7E00B0FB8B /* Enemy.swift */,
-				2C009E102046FD6300EB9236 /* LevelViewController.swift */,
+				2CE2834E203B873B0029C701 /* GameScene.swift */,
 				2CE28350203B873B0029C701 /* GameViewController.swift */,
+				2C3F4C56203CA07800B0FB8B /* Graphics.swift */,
+				2C3F4C52203BE12100B0FB8B /* Level.swift */,
+				2C009E102046FD6300EB9236 /* LevelViewController.swift */,
+				2C009E0C204623C600EB9236 /* MainViewController.swift */,
+				2C9B07C2205357E800029231 /* MusicPlayer.swift */,
+				2C009DFF20460ED700EB9236 /* Player.swift */,
+				2C3F4C58203E33A800B0FB8B /* Projectile.swift */,
 				2C3F4C4A203BA5F000B0FB8B /* Utils.swift */,
-				2CD6AF71203E886C001AF474 /* Wall.swift */,
-				2CE28352203B873B0029C701 /* Main.storyboard */,
+				2C38E6332049C9B100975F09 /* Kingthings Spikeless.ttf */,
 				2CE28355203B873B0029C701 /* Assets.xcassets */,
 				2CE28357203B873B0029C701 /* LaunchScreen.storyboard */,
-				2CE2835A203B873B0029C701 /* Info.plist */,
-				2CECCE972049DEED00A98C50 /* shop-icons.atlas */,
-				2C3F4C4C203BB9B400B0FB8B /* objects.atlas */,
-				2C009E062046112B00EB9236 /* misc.atlas */,
-				2CA5EFE52045F59600260FD8 /* enemies.atlas */,
+				2CE28352203B873B0029C701 /* Main.storyboard */,
 			);
 			path = SiegeDefense;
 			sourceTree = "<group>";
@@ -288,15 +300,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C3F4C4D203BB9B400B0FB8B /* objects.atlas in Resources */,
+				2C9B07CB205358FB00029231 /* building-adventure.mp3 in Resources */,
 				2CECCE992049DFDB00A98C50 /* Main.storyboard in Resources */,
-				2CECCE9A2049DFF300A98C50 /* shop-icons.atlas in Resources */,
 				2CE2834B203B873B0029C701 /* GameScene.sks in Resources */,
 				2C38E6342049C9B200975F09 /* Kingthings Spikeless.ttf in Resources */,
 				2CE28356203B873B0029C701 /* Assets.xcassets in Resources */,
-				2C009E072046112B00EB9236 /* misc.atlas in Resources */,
+				2C9B07C9205358E200029231 /* medieval-tradition.mp3 in Resources */,
 				2CE28359203B873B0029C701 /* LaunchScreen.storyboard in Resources */,
 				2CA5EFE62045F59600260FD8 /* enemies.atlas in Resources */,
 				2CE2834D203B873B0029C701 /* Actions.sks in Resources */,
+				2C9B07C5205358D300029231 /* king-of-thrones.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,10 +336,13 @@
 			files = (
 				2C009E0020460ED700EB9236 /* Player.swift in Sources */,
 				2C3F4C53203BE12100B0FB8B /* Level.swift in Sources */,
-				2CD6AF72203E886C001AF474 /* Wall.swift in Sources */,
+				2CD6AF72203E886C001AF474 /* Castle.swift in Sources */,
+				2C34338A20A026B900AF1740 /* CreditsViewController.swift in Sources */,
 				2C009E112046FD6300EB9236 /* LevelViewController.swift in Sources */,
+				2C9B07C3205357E800029231 /* MusicPlayer.swift in Sources */,
 				2C009E0D204623C600EB9236 /* MainViewController.swift in Sources */,
 				2CE2834F203B873B0029C701 /* GameScene.swift in Sources */,
+				2C85CB84209BAFB600239048 /* EnemiesViewController.swift in Sources */,
 				2C4AD0232044F27800002C41 /* Arrow.swift in Sources */,
 				2C3F4C4F203BBC7E00B0FB8B /* Enemy.swift in Sources */,
 				2CE28351203B873B0029C701 /* GameViewController.swift in Sources */,

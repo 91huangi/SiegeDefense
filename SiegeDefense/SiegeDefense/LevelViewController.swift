@@ -11,37 +11,43 @@ import UIKit
 
 class LevelViewController:UIViewController {
 
-    var player: Player?
+    var gameVC: GameViewController?
+    var grayText = UIColor.darkGray
     @IBOutlet weak var lblContinue: UILabel!
     @IBOutlet weak var lblGold: UILabel!
     @IBOutlet weak var lblScore: UILabel!
     @IBOutlet weak var lblMessage: UILabel!
     @IBOutlet weak var lblWallHealth: UILabel!
     @IBOutlet weak var lblSplitShot: UILabel!
-    @IBOutlet weak var lblHeatedShot: UILabel!
+    @IBOutlet weak var lblSplitShotDesc: UILabel!
+    @IBOutlet weak var lblBodkinArrow: UILabel!
+    @IBOutlet weak var lblBodkinArrowDesc: UILabel!
     @IBOutlet weak var lblMasonry: UILabel!
+    @IBOutlet weak var lblMasonryDesc: UILabel!
     @IBOutlet weak var lblRepair10: UILabel!
     @IBOutlet weak var lblRepair50: UILabel!
     @IBOutlet weak var lblArcheryRange: UILabel!
+    @IBOutlet weak var lblArcheryRangeDesc: UILabel!
     @IBOutlet weak var lblHireArcher: UILabel!
+    @IBOutlet weak var lblHireArcherDesc: UILabel!
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        lblScore.text = "Score: "+String(player!.score)
+        lblScore.text = "Score: "+String(Player.player.score)
         
         let continueTap =  UITapGestureRecognizer(target: self, action: #selector(LevelViewController.onTapContinue))
         lblContinue.isUserInteractionEnabled = true
         lblContinue.addGestureRecognizer(continueTap)
         
+        let bodkinArrowTap =  UITapGestureRecognizer(target: self, action: #selector(LevelViewController.onBodkinArrow))
+        lblBodkinArrow.isUserInteractionEnabled = true
+        lblBodkinArrow.addGestureRecognizer(bodkinArrowTap)
+        
         let splitShotTap =  UITapGestureRecognizer(target: self, action: #selector(LevelViewController.onTapSplitShot))
         lblSplitShot.isUserInteractionEnabled = true
         lblSplitShot.addGestureRecognizer(splitShotTap)
-        
-        let heatedShotTap =  UITapGestureRecognizer(target: self, action: #selector(LevelViewController.onTapHeatedShot))
-        lblHeatedShot.isUserInteractionEnabled = true
-        lblHeatedShot.addGestureRecognizer(heatedShotTap)
         
         let masonryTap =  UITapGestureRecognizer(target: self, action: #selector(LevelViewController.onTapMasonry))
         lblMasonry.isUserInteractionEnabled = true
@@ -61,32 +67,54 @@ class LevelViewController:UIViewController {
         
         let hireArcherTap =  UITapGestureRecognizer(target: self, action: #selector(LevelViewController.onTapHireArcher))
         lblHireArcher.isUserInteractionEnabled = true
-        lblHireArcher.text = "Hire Archer "+String(player!.archers)+"/10 - 500g"
+        lblHireArcher.text = "Hire Archer "+String(Player.player.archers)+"/10 | 500g"
         lblHireArcher.addGestureRecognizer(hireArcherTap)
         
+        if(gameVC == nil) {
+            gameVC = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
+        }
         
         
         updateLabels()
     }
     
+    func saveDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.set(Player.player.levelNum, forKey: "LevelNum")
+        defaults.set(Player.player.score, forKey: "Score")
+        defaults.set(Player.player.gold, forKey: "Gold")
+        defaults.set(Player.player.bodkinArrow, forKey: "BodkinArrowhead")
+        defaults.set(Player.player.splitShot, forKey: "3BoltCrossbow")
+        defaults.set(Player.player.wallHealth, forKey: "WallHealth")
+        defaults.set(Player.player.wallMaxHealth, forKey: "WallMaxHealth")
+        defaults.set(Player.player.archeryRange, forKey: "ArcheryRange")
+        defaults.set(Player.player.archers, forKey: "Archers")
+    }
+    
+    
     func updateLabels() {
         lblMessage.isHidden = true
-        lblGold.text = "Gold: "+String(player!.gold)
-        lblWallHealth.text = String(player!.wallHealth) + "/"+String(player!.wallMaxHealth)
-        if(player!.splitShot) {
-            lblSplitShot.textColor = UIColor.darkGray
+        lblGold.text = "Gold: "+String(Player.player.gold)
+        lblWallHealth.text = String(Player.player.wallHealth) + "/"+String(Player.player.wallMaxHealth)
+        if(Player.player.bodkinArrow) {
+            lblBodkinArrow.textColor = grayText
+            lblBodkinArrowDesc.textColor = grayText
         }
-        if(player!.heatedShot) {
-            lblHeatedShot.textColor = UIColor.darkGray
+        if(Player.player.splitShot) {
+            lblSplitShot.textColor = grayText
+            lblSplitShotDesc.textColor = grayText
         }
-        if(player!.wallMaxHealth == 300) {
-            lblMasonry.textColor = UIColor.darkGray
+        if(Player.player.wallMaxHealth == 300) {
+            lblMasonry.textColor = grayText
+            lblMasonryDesc.textColor = grayText
         }
-        if(player!.archeryRange) {
-            lblArcheryRange.textColor = UIColor.darkGray
+        if(Player.player.archeryRange) {
+            lblArcheryRange.textColor = grayText
+            lblArcheryRangeDesc.textColor = grayText
         }
-        if(player!.archers >= 10) {
-            lblHireArcher.textColor = UIColor.darkGray
+        if(Player.player.archers >= 10) {
+            lblHireArcher.textColor = grayText
+            lblHireArcherDesc.textColor = grayText
         }
     }
     
@@ -95,111 +123,112 @@ class LevelViewController:UIViewController {
         lblMessage.isHidden = false
     }
     
-    func onTapSplitShot(sender: UITapGestureRecognizer) {
-        if(lblSplitShot.textColor == UIColor.darkGray) {
+
+    
+    func onBodkinArrow(sender: UITapGestureRecognizer) {
+        if(lblBodkinArrow.textColor == grayText) {
             return
         }
-        if(player!.gold < 150) {
+        if(Player.player.gold < 150) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.gold -= 150
-        player!.splitShot = true
+        Player.player.gold -= 150
+        Player.player.bodkinArrow = true
         updateLabels()
     }
     
-    func onTapHeatedShot(sender: UITapGestureRecognizer) {
-        if(lblHeatedShot.textColor == UIColor.darkGray) {
+    func onTapSplitShot(sender: UITapGestureRecognizer) {
+        if(lblSplitShot.textColor == grayText) {
             return
         }
-        if(player!.gold < 500) {
+        if(Player.player.gold < 500) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.gold -= 500
-        player!.heatedShot = true
+        Player.player.gold -= 500
+        Player.player.splitShot = true
         updateLabels()
     }
     
     func onTapMasonry(sender: UITapGestureRecognizer) {
-        if(lblMasonry.textColor == UIColor.darkGray) {
+        if(lblMasonry.textColor == grayText) {
             return
         }
-        if(player!.gold < 500) {
+        if(Player.player.gold < 650) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.wallMaxHealth = 300
-        player!.gold -= 500
+        Player.player.wallMaxHealth = 300
+        Player.player.wallHealth += 200
+        Player.player.gold -= 650
         updateLabels()
     }
     
     func onTapRepair10(sender: UITapGestureRecognizer) {
-        if(player!.wallHealth >= player!.wallMaxHealth) {
+        if(Player.player.wallHealth >= Player.player.wallMaxHealth) {
             displayMessage(message: "Wall already fully repaired")
             return
         }
-        if(player!.gold < 25) {
+        if(Player.player.gold < 10) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.wallHealth = min(player!.wallHealth+10, player!.wallMaxHealth)
-        player!.gold -= 25
+        Player.player.wallHealth = min(Player.player.wallHealth+10, Player.player.wallMaxHealth)
+        Player.player.gold -= 10
         updateLabels()
     }
     
     func onTapRepair50(sender: UITapGestureRecognizer) {
-        if(player!.wallHealth >= player!.wallMaxHealth) {
+        if(Player.player.wallHealth >= Player.player.wallMaxHealth) {
             displayMessage(message: "Wall already fully repaired")
             return
         }
-        if(player!.gold < 100) {
+        if(Player.player.gold < 40) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.wallHealth = min(player!.wallHealth+50, player!.wallMaxHealth)
-        player!.gold -= 100
+        Player.player.wallHealth = min(Player.player.wallHealth+50, Player.player.wallMaxHealth)
+        Player.player.gold -= 40
         updateLabels()
     }
     
     func onTapArcheryRange(sender: UITapGestureRecognizer) {
-        if(lblArcheryRange.textColor == UIColor.darkGray) {
+        if(lblArcheryRange.textColor == grayText) {
             return
         }
-        if(player!.gold < 2000) {
+        if(Player.player.gold < 2000) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.archeryRange = true
-        player!.gold -= 2000
+        Player.player.archeryRange = true
+        Player.player.gold -= 2000
         updateLabels()
     }
     
     func onTapHireArcher(sender: UITapGestureRecognizer) {
-        if(lblHireArcher.textColor == UIColor.darkGray) {
+        if(lblHireArcher.textColor == grayText) {
             return
         }
-        if(!player!.archeryRange) {
+        if(!Player.player.archeryRange) {
             displayMessage(message: "Must construct archery range before hiring archers")
             return
         }
-        if(player!.gold < 500) {
+        if(Player.player.gold < 500) {
             displayMessage(message: "Not enough gold for purchase")
             return
         }
-        player!.archers += 1
-        player!.gold -= 500
-        lblHireArcher.text = "Hire Archer "+String(player!.archers)+"/10 - 500g"
+        Player.player.archers += 1
+        Player.player.gold -= 500
+        lblHireArcher.text = "Hire Archer "+String(Player.player.archers)+"/10 | 500g"
         updateLabels()
     }
     
     func onTapContinue(sender: UITapGestureRecognizer) {
-        // dismissing game view
+        Player.player.levelNum += 1
+        saveDefaults()
         self.dismiss(animated: true, completion: {})
-        
-        let gameVC = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
-        gameVC.player = player
-        self.view?.window?.rootViewController = gameVC
+        MusicPlayer.loadLevelMusic()
     }
     
     deinit {

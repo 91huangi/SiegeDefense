@@ -12,12 +12,15 @@ import GameplayKit
 
 class GameViewController: UIViewController, GameSceneDelegate {
 
-    weak var scene:GameScene? = GameScene()
-    var player: Player?
+    weak var scene:GameScene?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
@@ -25,18 +28,20 @@ class GameViewController: UIViewController, GameSceneDelegate {
             // Set the scale mode to scale to fit the window
             scene?.scaleMode = .aspectFill
             scene!.gsDel = self
-            scene!.player = player!
-
-
+            scene!.player = Player.player
+            
+            
             // Present the scene
             view.presentScene(scene)
-
+            
             
             view.ignoresSiblingOrder = true
             
             view.showsFPS = true
             view.showsNodeCount = true
         }
+        
+        
     }
 
     override var shouldAutorotate: Bool {
@@ -62,23 +67,16 @@ class GameViewController: UIViewController, GameSceneDelegate {
     
     func levelEnded(backToMain: Bool) {
         
-
-        // dismissing game view controller
-        self.dismiss(animated: true, completion: {})
-        
-        if let view = self.view as! SKView? {
-            view.presentScene(SKScene())
-            // view.removeFromSuperview()
-        }
-        
         if(backToMain) {
-            let mainVC = self.storyboard?.instantiateViewController(withIdentifier: "MainViewController") as! UIViewController
-            self.view?.window?.rootViewController = mainVC
+            self.dismiss(animated: true, completion: {})
+            MusicPlayer.loadMenuMusic()
         } else {
-            let levelVC = self.storyboard?.instantiateViewController(withIdentifier: "LevelViewController") as! LevelViewController
-            levelVC.player = player!
-            self.view?.window?.rootViewController = levelVC
+            self.performSegue(withIdentifier: "LevelSegue", sender: self)
+            MusicPlayer.loadShopMusic()
         }
+        
+        
+
 
     }
     

@@ -11,31 +11,129 @@ import UIKit
 
 class MainViewController:UIViewController {
     @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblTutorial: UILabel!
+    @IBOutlet weak var lblEnemies: UILabel!
+    @IBOutlet weak var lblLoad: UILabel!
+    @IBOutlet weak var lblCredits: UILabel!
+    @IBOutlet weak var lblExit: UILabel!
     
-    var player: Player?
+    
+    @IBOutlet weak var lblMessage: UILabel!
+
+    static var player: Player?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let startTap =  UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapStart))
-        lblStart.isUserInteractionEnabled = true
-        lblStart.addGestureRecognizer(startTap)
         
+        loadLabels()
+        
+
+        
+        MusicPlayer.loadMenuMusic()
         
         Graphics.loadAnimations()
-        player = Player()
-        
+        Player.player = Player()
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        lblMessage.isHidden = true
+    }
+    
+    func loadLabels() {
+        
+        let tutorialTap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapTutorial))
+        lblTutorial.isUserInteractionEnabled = true
+        lblTutorial.addGestureRecognizer(tutorialTap)
+        
+        let enemiesTap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapEnemies))
+        lblEnemies.isUserInteractionEnabled = true
+        lblEnemies.addGestureRecognizer(enemiesTap)
+        
+        let loadTap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapLoad))
+        lblLoad.isUserInteractionEnabled = true
+        lblLoad.addGestureRecognizer(loadTap)
+        
+        let creditsTap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapCredits))
+        lblCredits.isUserInteractionEnabled = true
+        lblCredits.addGestureRecognizer(creditsTap)
+        
+        let exitTap = UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapExit))
+        lblExit.isUserInteractionEnabled = true
+        lblExit.addGestureRecognizer(exitTap)
+        
+        
+        let startTap =  UITapGestureRecognizer(target: self, action: #selector(MainViewController.onTapStart))
+        lblStart.isUserInteractionEnabled = true
+        lblStart.addGestureRecognizer(startTap)
+    }
+    
+    func onTapTutorial(sender: UITapGestureRecognizer) {
+        
+        Player.player = Player()
+        Player.player.levelNum = 0
+        
+        // self.view?.window?.rootViewController = gameVC
+        self.performSegue(withIdentifier: "GameSegue", sender: self)
+        // MusicPlayer.loadLevelMusic()
+    }
+    
+    func onTapEnemies(sender: UITapGestureRecognizer) {
+        self.performSegue(withIdentifier: "EnemiesSegue", sender: self)
+    }
+    
+    func onTapCredits(sender: UITapGestureRecognizer) {
+        self.performSegue(withIdentifier: "CreditsSegue", sender: self)
+    }
+    
+    func onTapExit(sender: UITapGestureRecognizer) {
+        exit(0);
+    }
+    
+    func onTapLoad(sender: UITapGestureRecognizer) {
+        let defaults = UserDefaults.standard
+        let levelNum = defaults.integer(forKey: "LevelNum")
+        if levelNum != 0 {
+            Player.player = Player()
+            Player.player.levelNum = levelNum
+            Player.player.score = defaults.integer(forKey: "Score")
+            Player.player.splitShot = defaults.bool(forKey: "3BoltCrossbow")
+            Player.player.bodkinArrow = defaults.bool(forKey: "BodkinArrowhead")
+            Player.player.wallMaxHealth = defaults.integer(forKey: "WallMaxHealth")
+            Player.player.wallHealth = defaults.integer(forKey: "WallHealth")
+            Player.player.archeryRange = defaults.bool(forKey: "ArcheryRange")
+            Player.player.archers = defaults.integer(forKey: "Archers")
+            Player.player.gold = defaults.integer(forKey: "Gold")
+            self.performSegue(withIdentifier: "GameSegue", sender: self)
+            MusicPlayer.loadLevelMusic()
+        } else {
+            lblMessage.text = "No games saved"
+            lblMessage.isHidden = false
+        }
+    }
+
+    
     func onTapStart(sender: UITapGestureRecognizer) {
         
-        // dismissing game view
-        self.dismiss(animated: true, completion: {})
         
-        player!.levelNum = 7
-        let gameVC = self.storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
-        gameVC.player = player
-        self.view?.window?.rootViewController = gameVC
+        Player.player = Player()
+        
+        // Max out stats
+        
+        /*
+        Player.player.levelNum = 24
+        Player.player.splitShot = true
+        Player.player.bodkinArrow = true
+        Player.player.wallMaxHealth = 300
+        Player.player.wallHealth = 300
+        Player.player.archeryRange = true
+        Player.player.archers = 6
+        Player.player.gold = 300
+        */
+        
+        
+        self.performSegue(withIdentifier: "GameSegue", sender: self)
+        MusicPlayer.loadLevelMusic()
     }
     
     deinit {

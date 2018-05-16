@@ -17,7 +17,7 @@ class Level {
     
     init(levelNum: Int) {
         self.levelNum=levelNum
-        self.timer=20+levelNum
+        self.timer=40+levelNum
         self.score = 0
     }
     

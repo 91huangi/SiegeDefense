@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SiegeDefense/GameScene.swift"
-            timestampString = "542332585.6280299"
+            timestampString = "548105765.252393"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "615"
-            endingLineNumber = "615"
+            startingLineNumber = "774"
+            endingLineNumber = "774"
             landmarkName = "checkEndLevel()"
             landmarkType = "7">
          </BreakpointContent>
